@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "629627177990",
+    "project_id": "lacdaustore-cf7c8",
+    "storage_bucket": "lacdaustore-cf7c8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629627177990:android:518e19b541b356d0e74787",
+        "android_client_info": {
+          "package_name": "com.ducan2210.LacDauStore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629627177990-tof1ofqdbo05joueckbq5gs5i8av1e88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ducan2210.LacDauStore",
+            "certificate_hash": "3ba60db1dad8a22c1afc76dfde7cabdcea3fd841"
+          }
+        },
+        {
+          "client_id": "629627177990-9ne7td287mpqrvqn34kkss8p8ljfdhr2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqqOiboipVxztDZZolGaEtcqvL2bLOKPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629627177990-9ne7td287mpqrvqn34kkss8p8ljfdhr2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "629627177990-bddg2oai37ufuljb5s34qo244voe6qas.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ducan2210.LacDauStore"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
