@@ -42,3 +42,15 @@ export const getProductById = async (query: number) => {
     throw new Error('Failed to find product: ' + error);
   }
 };
+
+export const getProductByCategoryId = async (query: number) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductByCategoryID?category_id=${query}`,
+    );
+
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};

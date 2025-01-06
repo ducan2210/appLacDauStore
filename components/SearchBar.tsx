@@ -68,10 +68,11 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
           }}
           placeholder="Search Product"
           onSubmitEditing={() => {
-            router.push({
-              pathname: '/moreScreen/search/[search]',
-              params: {search: textSearch}, // Pass any parameters if needed
-            });
+            textSearch &&
+              router.push({
+                pathname: '/moreScreen/search/[search]',
+                params: {search: textSearch}, // Pass any parameters if needed
+              });
           }}
         />
         {textSearch.length > 0 && (

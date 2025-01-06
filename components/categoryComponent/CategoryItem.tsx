@@ -6,6 +6,7 @@ import {
 } from 'react-native-responsive-screen';
 import {typeCategory} from '@/models/category.model';
 import {MaterialIcons} from '@expo/vector-icons';
+import {router} from 'expo-router';
 
 type props = {
   item: typeCategory;
@@ -18,10 +19,18 @@ const CategoryItem = ({item, index = 0}: props) => {
   const toggleExpand = () => {
     setExpanded(prev => !prev); // Đổi trạng thái khi nhấn
   };
+  const handelCategory = (name: string, id: number) => {
+    router.push({
+      pathname: '/moreScreen/search/[search]',
+      params: {search: name, category: id}, // Pass any parameters if needed
+    });
+  };
 
   return (
     <View style={[styles.container, {marginLeft: wp(index * 10)}]}>
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => handelCategory(item.name, item.category_id)}>
         <Text
           style={[
             styles.title,

@@ -16,20 +16,27 @@ import {Link, useLocalSearchParams} from 'expo-router';
 import {AntDesign} from '@expo/vector-icons';
 import SearchBar from '@/components/SearchBar';
 import BtnBackScreen from '@/components/BtnBackScreen';
-import {getSearchProduct} from '@/hooks/api/useProduct';
+import {getProductByCategoryId, getSearchProduct} from '@/hooks/api/useProduct';
 import ListProduct from '@/components/productComponent/listProduct';
 const Search = () => {
-  const {search} = useLocalSearchParams<{search: string}>();
+  const {search, category} = useLocalSearchParams();
+  const searchValue = search as string;
+  const categoryValue = category ? Number(category) : undefined;
   const [products, setProducts] = useState<typeProduct[]>([]);
+  let product: typeProduct[];
   useEffect(() => {
-    console.log(search);
     const fetchProducts = async () => {
-      if (search.trim() == '') {
+      if (searchValue.trim() == '') {
         setProducts([]);
         return;
       }
       try {
-        const product = await getSearchProduct(search);
+        if (categoryValue) {
+          product = await getProductByCategoryId(categoryValue);
+        } else {
+          product = await getSearchProduct(searchValue);
+        }
+
         if (product) {
           setProducts(product);
         } else {
@@ -42,13 +49,15 @@ const Search = () => {
       }
     };
     fetchProducts();
-  }, [search]);
+  }, [searchValue, categoryValue]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{flex: 0.9, flexDirection: 'row'}}>
           <BtnBackScreen></BtnBackScreen>
-          <Text style={styles.title}>{search}</Text>
+          <Text style={styles.title}>
+            {searchValue ? searchValue : categoryValue}
+          </Text>
         </View>
         <TouchableOpacity>
           <Link href={'/moreScreen/favoriteProduct'} asChild>
