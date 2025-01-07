@@ -13,17 +13,24 @@ import {
 
 import {typeProduct} from '@/models/product.model';
 import {Link, useLocalSearchParams} from 'expo-router';
-import {AntDesign} from '@expo/vector-icons';
-import SearchBar from '@/components/SearchBar';
+import {AntDesign, Feather, FontAwesome6} from '@expo/vector-icons';
+
 import BtnBackScreen from '@/components/BtnBackScreen';
 import {getProductByCategoryId, getSearchProduct} from '@/hooks/api/useProduct';
 import ListProduct from '@/components/productComponent/listProduct';
+
+import BtnFilter from '@/components/BtnFilter';
 const Search = () => {
   const {search, category} = useLocalSearchParams();
   const searchValue = search as string;
   const categoryValue = category ? Number(category) : undefined;
   const [products, setProducts] = useState<typeProduct[]>([]);
   let product: typeProduct[];
+  const [quantity, setQuantity] = useState<number>(0);
+  const [sort, setSort] = useState<boolean>(true);
+  const handleSort = () => {
+    setSort(!sort);
+  };
   useEffect(() => {
     const fetchProducts = async () => {
       if (searchValue.trim() == '') {
@@ -33,10 +40,11 @@ const Search = () => {
       try {
         if (categoryValue) {
           product = await getProductByCategoryId(categoryValue);
+          setQuantity(product.length);
         } else {
           product = await getSearchProduct(searchValue);
+          setQuantity(product.length);
         }
-
         if (product) {
           setProducts(product);
         } else {
@@ -78,11 +86,80 @@ const Search = () => {
         </Link>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-        {products && (
-          <ListProduct
-            data={products}
-            horizontal={false}
-            numColumns={2}></ListProduct>
+        {quantity > 0 && (
+          <View
+            style={{
+              marginBottom: hp(2),
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: wp(4),
+                fontWeight: 'bold',
+                color: '#9098B1',
+              }}>
+              {quantity.toString()} Result
+            </Text>
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity onPress={handleSort}>
+                <FontAwesome6
+                  name={sort ? 'arrow-down-wide-short' : 'arrow-up-wide-short'}
+                  size={wp(6)}
+                  color="#9098B1"
+                />
+              </TouchableOpacity>
+              <BtnFilter></BtnFilter>
+            </View>
+          </View>
+        )}
+
+        {products.length > 0 ? (
+          <View>
+            <ListProduct
+              data={products}
+              horizontal={false}
+              numColumns={2}
+              sort={sort}></ListProduct>
+          </View>
+        ) : (
+          <View style={{alignItems: 'center'}}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: wp(100),
+                height: hp(7),
+                width: hp(7),
+                backgroundColor: '#40BFFF',
+                marginTop: hp(20),
+                marginBottom: hp(2),
+              }}>
+              <Feather name="x" size={wp(8)} color="white" />
+            </View>
+            <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
+              Product Not Found
+            </Text>
+            <Link href={'/(tabs)/home'} asChild>
+              <TouchableOpacity
+                style={{
+                  marginTop: hp(2),
+                  backgroundColor: '#40BFFF',
+                  height: hp(8),
+                  width: wp(94),
+                  marginBottom: hp(7),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: wp(2),
+                }}>
+                <Text
+                  style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
+                  Back to Home
+                </Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
         )}
       </ScrollView>
     </View>

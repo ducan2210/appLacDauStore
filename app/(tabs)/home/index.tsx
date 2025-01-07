@@ -26,6 +26,7 @@ import {typeProduct} from '@/models/product.model';
 import {getCategoryRoot} from '@/hooks/api/useCategory';
 import {typeCategory} from '@/models/category.model';
 import ProductsRecommend from '@/components/productsRecommend';
+import Loading from '@/components/Loading';
 
 const Home = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -37,35 +38,28 @@ const Home = () => {
       {/* Add more product details here if needed */}
     </TouchableOpacity>
   );
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    const fetchToken = async () => {
-      const savedToken = await getToken();
-      if (savedToken) {
-        setToken(savedToken);
-      } else {
-        console.log('No token found');
-      }
-    };
-    const fetchDataProduct = async () => {
-      const data = await getAllProductAvailability();
-      if (data) {
-        setDataProduct(data);
-      } else {
-        console.log('No data found');
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [token, products, categories] = await Promise.all([
+          getToken(),
+          getAllProductAvailability(),
+          getCategoryRoot(),
+        ]);
+
+        if (token) setToken(token);
+        if (products) setDataProduct(products);
+        if (categories) setDataCategory(categories);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    const fetchCategoryRoot = async () => {
-      const data = await getCategoryRoot();
-      if (data) {
-        setDataCategory(data);
-      } else {
-        console.log('No data found');
-      }
-    };
-    fetchCategoryRoot();
-    fetchToken();
-    fetchDataProduct();
+    fetchData();
   }, []);
 
   const [productsRecommend, setProductsRecommend] = useState<typeProduct[]>([]);
@@ -76,87 +70,98 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <SearchBar onTextSearchChange={handleTextSearchChange}></SearchBar>
-        <TouchableOpacity>
-          <Link href={'/moreScreen/favoriteProduct'} asChild>
+      {isLoading ? (
+        <Loading visible={isLoading} text="Loading..." />
+      ) : (
+        <>
+          <View style={styles.header}>
+            <SearchBar onTextSearchChange={handleTextSearchChange}></SearchBar>
             <TouchableOpacity>
-              <AntDesign
-                style={{}}
-                name="hearto"
-                size={wp(7)}
-                color="#9098B1"
-              />
-            </TouchableOpacity>
-          </Link>
-        </TouchableOpacity>
-        <Link href={'/moreScreen/notification'} asChild>
-          <TouchableOpacity>
-            <AntDesign style={{}} name="bells" size={wp(7)} color="#9098B1" />
-          </TouchableOpacity>
-        </Link>
-      </View>
-      {productsRecommend.length > 0 && (
-        <ProductsRecommend
-          data={productsRecommend}
-          index={5}></ProductsRecommend>
-      )}
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-        <Slider></Slider>
-        <View style={styles.other}>
-          <Text style={styles.otherTitle1}>Category</Text>
-          <Link href={'/(tabs)/explore'} asChild>
-            <Text style={styles.otherTitle2}>More Category</Text>
-          </Link>
-        </View>
-        <View>
-          <FlatList
-            data={dataCategory}
-            renderItem={({item}) => {
-              return (
-                <TouchableOpacity style={styles.categoryItem}>
-                  <View style={styles.itemIcon}>
-                    <AntDesign name="info" size={wp(10)} color="#40BFFF" />
-                  </View>
-                  <Text style={{color: '#9098B1', marginTop: hp(2)}}>
-                    {item.name}
-                  </Text>
+              <Link href={'/moreScreen/favoriteProduct'} asChild>
+                <TouchableOpacity>
+                  <AntDesign
+                    style={{}}
+                    name="hearto"
+                    size={wp(7)}
+                    color="#9098B1"
+                  />
                 </TouchableOpacity>
-              );
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{marginTop: hp(2.5)}}
-            nestedScrollEnabled={true} // Thêm dòng này
-          ></FlatList>
-        </View>
+              </Link>
+            </TouchableOpacity>
+            <Link href={'/moreScreen/notification'} asChild>
+              <TouchableOpacity>
+                <AntDesign
+                  style={{}}
+                  name="bells"
+                  size={wp(7)}
+                  color="#9098B1"
+                />
+              </TouchableOpacity>
+            </Link>
+          </View>
+          {productsRecommend.length > 0 && (
+            <ProductsRecommend
+              data={productsRecommend}
+              index={5}></ProductsRecommend>
+          )}
+          <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+            <Slider></Slider>
+            <View style={styles.other}>
+              <Text style={styles.otherTitle1}>Category</Text>
+              <Link href={'/(tabs)/explore'} asChild>
+                <Text style={styles.otherTitle2}>More Category</Text>
+              </Link>
+            </View>
+            <View>
+              <FlatList
+                data={dataCategory}
+                renderItem={({item}) => {
+                  return (
+                    <TouchableOpacity style={styles.categoryItem}>
+                      <View style={styles.itemIcon}>
+                        <AntDesign name="info" size={wp(10)} color="#40BFFF" />
+                      </View>
+                      <Text style={{color: '#9098B1', marginTop: hp(2)}}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{marginTop: hp(2.5)}}
+                nestedScrollEnabled={true} // Thêm dòng này
+              ></FlatList>
+            </View>
 
-        <View style={styles.other}>
-          <Text style={styles.otherTitle1}>Flash Sale</Text>
-          <Text style={styles.otherTitle2}>See More</Text>
-        </View>
-        <View>
-          <ListProduct data={dataProduct}></ListProduct>
-        </View>
-        <View style={styles.other}>
-          <Text style={styles.otherTitle1}>Mega Sale</Text>
-          <Text style={styles.otherTitle2}>See More</Text>
-        </View>
-        <View>
-          <ListProduct
-            data={dataProduct}
-            // horizontal={false}
-            // numColumns={2}
-          ></ListProduct>
-        </View>
-        <View style={{marginTop: hp(3)}}>
-          <ListProduct
-            data={dataProduct}
-            horizontal={false}
-            numColumns={2}></ListProduct>
-        </View>
-        <View style={{height: hp(10)}}></View>
-      </ScrollView>
+            <View style={styles.other}>
+              <Text style={styles.otherTitle1}>Flash Sale</Text>
+              <Text style={styles.otherTitle2}>See More</Text>
+            </View>
+            <View>
+              <ListProduct data={dataProduct}></ListProduct>
+            </View>
+            <View style={styles.other}>
+              <Text style={styles.otherTitle1}>Mega Sale</Text>
+              <Text style={styles.otherTitle2}>See More</Text>
+            </View>
+            <View>
+              <ListProduct
+                data={dataProduct}
+                // horizontal={false}
+                // numColumns={2}
+              ></ListProduct>
+            </View>
+            <View style={{marginTop: hp(3)}}>
+              <ListProduct
+                data={dataProduct}
+                horizontal={false}
+                numColumns={2}></ListProduct>
+            </View>
+            <View style={{height: hp(10)}}></View>
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 };
