@@ -97,15 +97,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  productBox: {
-    padding: wp(2),
-    marginBottom: wp(2),
-    borderWidth: wp(0.1),
-    borderColor: '#ccc',
-    // borderRadius: 8,
-  },
-  productName: {
-    fontSize: 16,
-    color: '#333',
-  },
+  // productBox: {
+  //   padding: wp(2),
+  //   marginBottom: wp(2),
+  //   borderWidth: wp(0.1),
+  //   borderColor: '#ccc',
+  //   // borderRadius: 8,
+  // },
+  // productName: {
+  //   fontSize: 16,
+  //   color: '#333',
+  // },
 });

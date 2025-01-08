@@ -12,6 +12,7 @@ const _layout = () => {
       <Stack.Screen name="notification" options={{headerShown: false}} />
       <Stack.Screen name="accountSetting" options={{headerShown: false}} />
       <Stack.Screen name="search" options={{headerShown: false}} />
+      <Stack.Screen name="shortBy" options={{headerShown: false}} />
     </Stack>
   );
 };

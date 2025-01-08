@@ -14,15 +14,15 @@ type props = {
 };
 
 const CategoryItem = ({item, index = 0}: props) => {
-  const [expanded, setExpanded] = useState(false); // Thêm state để theo dõi trạng thái mở/đóng
+  const [expanded, setExpanded] = useState(true); // Thêm state để theo dõi trạng thái mở/đóng
 
   const toggleExpand = () => {
     setExpanded(prev => !prev); // Đổi trạng thái khi nhấn
   };
-  const handelCategory = (name: string, id: number) => {
+  const handelCategory = (name: string, id: number, categoryName: string) => {
     router.push({
       pathname: '/moreScreen/search/[search]',
-      params: {search: name, category: id}, // Pass any parameters if needed
+      params: {search: name, category: id, categoryName: categoryName}, // Pass any parameters if needed
     });
   };
 
@@ -30,7 +30,7 @@ const CategoryItem = ({item, index = 0}: props) => {
     <View style={[styles.container, {marginLeft: wp(index * 10)}]}>
       <TouchableOpacity
         style={styles.item}
-        onPress={() => handelCategory(item.name, item.category_id)}>
+        onPress={() => handelCategory(item.name, item.category_id, item.name)}>
         <Text
           style={[
             styles.title,

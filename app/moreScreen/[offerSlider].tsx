@@ -34,10 +34,6 @@ const OfferSlider = () => {
           <Image
             style={{width: wp(94), height: hp(30), marginBottom: hp(2)}}
             source={require('../../assets/images/giay.png')}></Image>
-          {/* <ListProduct
-            data={ProductData}
-            horizontal={false}
-            numColumns={2}></ListProduct> */}
         </View>
       </ScrollView>
     </View>

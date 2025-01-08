@@ -74,7 +74,9 @@ const ProductDetail = () => {
                 params: {productReview: 'def'},
               }}
               asChild>
-              <Text style={styles.otherTitle2}>See More</Text>
+              <TouchableOpacity>
+                <Text style={styles.otherTitle2}>See More</Text>
+              </TouchableOpacity>
             </Link>
           </View>
         </View>

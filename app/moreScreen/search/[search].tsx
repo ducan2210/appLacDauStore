@@ -20,19 +20,23 @@ import {getProductByCategoryId, getSearchProduct} from '@/hooks/api/useProduct';
 import ListProduct from '@/components/productComponent/listProduct';
 
 import BtnFilter from '@/components/BtnFilter';
+import Loading from '@/components/Loading';
 const Search = () => {
-  const {search, category} = useLocalSearchParams();
+  const {search, category, categoryName} = useLocalSearchParams();
   const searchValue = search as string;
+  const categoryTitle = categoryName as string;
   const categoryValue = category ? Number(category) : undefined;
   const [products, setProducts] = useState<typeProduct[]>([]);
   let product: typeProduct[];
   const [quantity, setQuantity] = useState<number>(0);
-  const [sort, setSort] = useState<boolean>(true);
-  const handleSort = () => {
-    setSort(!sort);
-  };
+  const [sort, setSort] = useState<boolean>(false);
+  // const handleSort = () => {
+  //   setSort(!sort);
+  // };
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       if (searchValue.trim() == '') {
         setProducts([]);
         return;
@@ -54,6 +58,8 @@ const Search = () => {
       } catch (error) {
         console.error('Error fetching products:', error);
         setProducts([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchProducts();
@@ -62,104 +68,121 @@ const Search = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{flex: 0.9, flexDirection: 'row'}}>
-          <BtnBackScreen></BtnBackScreen>
+          <Link href={'/(tabs)/explore'} asChild>
+            <TouchableOpacity>
+              <AntDesign name="left" size={wp(6)} color="#9098B1" />
+            </TouchableOpacity>
+          </Link>
           <Text style={styles.title}>
             {searchValue ? searchValue : categoryValue}
           </Text>
         </View>
-        <TouchableOpacity>
-          <Link href={'/moreScreen/favoriteProduct'} asChild>
-            <TouchableOpacity>
-              <AntDesign
-                style={{}}
-                name="hearto"
-                size={wp(7)}
-                color="#9098B1"
-              />
-            </TouchableOpacity>
-          </Link>
-        </TouchableOpacity>
-        <Link href={'/moreScreen/notification'} asChild>
+        <View style={{flexDirection: 'row'}}>
           <TouchableOpacity>
-            <AntDesign style={{}} name="bells" size={wp(7)} color="#9098B1" />
+            <FontAwesome6
+              name={sort ? 'arrow-down-wide-short' : 'arrow-up-wide-short'}
+              size={wp(6)}
+              color="#9098B1"
+            />
           </TouchableOpacity>
-        </Link>
+          <BtnFilter></BtnFilter>
+        </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-        {quantity > 0 && (
-          <View
-            style={{
-              marginBottom: hp(2),
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: wp(4),
-                fontWeight: 'bold',
-                color: '#9098B1',
-              }}>
-              {quantity.toString()} Result
-            </Text>
-            <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity onPress={handleSort}>
-                <FontAwesome6
-                  name={sort ? 'arrow-down-wide-short' : 'arrow-up-wide-short'}
-                  size={wp(6)}
-                  color="#9098B1"
-                />
-              </TouchableOpacity>
-              <BtnFilter></BtnFilter>
-            </View>
-          </View>
-        )}
-
-        {products.length > 0 ? (
-          <View>
-            <ListProduct
-              data={products}
-              horizontal={false}
-              numColumns={2}
-              sort={sort}></ListProduct>
-          </View>
+        {isLoading ? (
+          <Loading visible={isLoading} text="Loading..." />
         ) : (
-          <View style={{alignItems: 'center'}}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: wp(100),
-                height: hp(7),
-                width: hp(7),
-                backgroundColor: '#40BFFF',
-                marginTop: hp(20),
-                marginBottom: hp(2),
-              }}>
-              <Feather name="x" size={wp(8)} color="white" />
-            </View>
-            <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
-              Product Not Found
-            </Text>
-            <Link href={'/(tabs)/home'} asChild>
-              <TouchableOpacity
+          <>
+            {quantity > 0 && (
+              <View
                 style={{
-                  marginTop: hp(2),
-                  backgroundColor: '#40BFFF',
-                  height: hp(8),
-                  width: wp(94),
-                  marginBottom: hp(7),
-                  justifyContent: 'center',
+                  marginBottom: hp(2),
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  borderRadius: wp(2),
                 }}>
                 <Text
-                  style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
-                  Back to Home
+                  style={{
+                    fontSize: wp(4),
+                    fontWeight: 'bold',
+                    color: '#9098B1',
+                  }}>
+                  {quantity.toString()} Result
                 </Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
+                {categoryTitle && (
+                  <Link href="/moreScreen/shortBy" asChild>
+                    <TouchableOpacity
+                      style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          fontSize: wp(4),
+                          fontWeight: 'bold',
+                        }}>
+                        {categoryTitle}
+                      </Text>
+                      <AntDesign
+                        style={{marginLeft: wp(2)}}
+                        name="down"
+                        size={wp(4)}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                  </Link>
+                )}
+              </View>
+            )}
+
+            {products.length > 0 ? (
+              <View>
+                <ListProduct
+                  data={products}
+                  horizontal={false}
+                  numColumns={2}
+                  sort={sort}></ListProduct>
+              </View>
+            ) : (
+              <View style={{alignItems: 'center'}}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: wp(100),
+                    height: hp(7),
+                    width: hp(7),
+                    backgroundColor: '#40BFFF',
+                    marginTop: hp(20),
+                    marginBottom: hp(2),
+                  }}>
+                  <Feather name="x" size={wp(8)} color="white" />
+                </View>
+                <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
+                  Product Not Found
+                </Text>
+                <Link href={'/(tabs)/home'} asChild>
+                  <TouchableOpacity
+                    style={{
+                      marginTop: hp(2),
+                      backgroundColor: '#40BFFF',
+                      height: hp(8),
+                      width: wp(94),
+                      marginBottom: hp(7),
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: wp(2),
+                    }}>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: wp(4),
+                        color: 'white',
+                      }}>
+                      Back to Home
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
+            )}
+          </>
         )}
       </ScrollView>
     </View>

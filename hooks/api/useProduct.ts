@@ -49,7 +49,7 @@ export const getProductByCategoryId = async (query: number) => {
       `${apiUrl}/GetProductByCategoryID?category_id=${query}`,
     );
 
-    return response.data;
+    return response.data as typeProduct[];
   } catch (error) {
     throw new Error('Failed to find product: ' + error);
   }
