@@ -22,39 +22,42 @@ import ListProduct from '@/components/productComponent/listProduct';
 import BtnFilter from '@/components/BtnFilter';
 import Loading from '@/components/Loading';
 const Search = () => {
-  const {search, category, categoryName} = useLocalSearchParams();
-  const searchValue = search as string;
-  const categoryTitle = categoryName as string;
+  const {searchResult, category, categoryName, sortedProducts} =
+    useLocalSearchParams();
+  const searchValue = searchResult as string;
+  const [categoryTitle, setCategoryTitle] = useState<string>(
+    categoryName as string,
+  );
   const categoryValue = category ? Number(category) : undefined;
   const [products, setProducts] = useState<typeProduct[]>([]);
-  let product: typeProduct[];
+  const decodedSort = sortedProducts
+    ? decodeURIComponent(sortedProducts as string)
+    : '[]';
   const [quantity, setQuantity] = useState<number>(0);
-  const [sort, setSort] = useState<boolean>(false);
-  // const handleSort = () => {
-  //   setSort(!sort);
-  // };
   const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
-      if (searchValue.trim() == '') {
+      if (searchValue.trim() === '') {
         setProducts([]);
+        setIsLoading(false);
         return;
       }
       try {
-        if (categoryValue) {
+        let product: typeProduct[] = [];
+        if (sortedProducts) {
+          setCategoryTitle(searchValue);
+          product = JSON.parse(decodedSort);
+          setQuantity(product.length);
+        } else if (categoryValue) {
           product = await getProductByCategoryId(categoryValue);
           setQuantity(product.length);
         } else {
           product = await getSearchProduct(searchValue);
           setQuantity(product.length);
         }
-        if (product) {
-          setProducts(product);
-        } else {
-          setProducts([]);
-          console.log('No products found');
-        }
+        setProducts(product);
       } catch (error) {
         console.error('Error fetching products:', error);
         setProducts([]);
@@ -63,7 +66,7 @@ const Search = () => {
       }
     };
     fetchProducts();
-  }, [searchValue, categoryValue]);
+  }, [searchValue, categoryValue, sortedProducts]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -78,13 +81,23 @@ const Search = () => {
           </Text>
         </View>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity>
-            <FontAwesome6
-              name={sort ? 'arrow-down-wide-short' : 'arrow-up-wide-short'}
-              size={wp(6)}
-              color="#9098B1"
-            />
-          </TouchableOpacity>
+          <Link
+            href={{
+              pathname: '/moreScreen/sort/[sort]',
+              params: {
+                sort: encodeURIComponent(JSON.stringify(products)),
+                title: searchValue ? searchValue : categoryValue,
+              },
+            }}
+            asChild>
+            <TouchableOpacity>
+              <FontAwesome6
+                name="arrow-down-wide-short"
+                size={wp(6)}
+                color="#9098B1"
+              />
+            </TouchableOpacity>
+          </Link>
           <BtnFilter></BtnFilter>
         </View>
       </View>
@@ -110,7 +123,7 @@ const Search = () => {
                   {quantity.toString()} Result
                 </Text>
                 {categoryTitle && (
-                  <Link href="/moreScreen/shortBy" asChild>
+                  <Link href="/moreScreen/category" asChild>
                     <TouchableOpacity
                       style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text
@@ -137,8 +150,7 @@ const Search = () => {
                 <ListProduct
                   data={products}
                   horizontal={false}
-                  numColumns={2}
-                  sort={sort}></ListProduct>
+                  numColumns={2}></ListProduct>
               </View>
             ) : (
               <View style={{alignItems: 'center'}}>

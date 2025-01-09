@@ -70,8 +70,8 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
           onSubmitEditing={() => {
             textSearch &&
               router.push({
-                pathname: '/moreScreen/search/[search]',
-                params: {search: textSearch}, // Pass any parameters if needed
+                pathname: '/moreScreen/search/[searchResult]',
+                params: {searchResult: textSearch}, // Pass any parameters if needed
               });
           }}
         />

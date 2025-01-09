@@ -5,7 +5,7 @@ import {Stack} from 'expo-router';
 const _layout = () => {
   return (
     <Stack>
-      <Stack.Screen name="[searchResult]" options={{headerShown: false}} />
+      <Stack.Screen name="[sort]" options={{headerShown: false}} />
     </Stack>
   );
 };

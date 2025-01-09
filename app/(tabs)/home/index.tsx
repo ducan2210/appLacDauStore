@@ -109,7 +109,9 @@ const Home = () => {
             <View style={styles.other}>
               <Text style={styles.otherTitle1}>Category</Text>
               <Link href={'/(tabs)/explore'} asChild>
-                <Text style={styles.otherTitle2}>More Category</Text>
+                <TouchableOpacity>
+                  <Text style={styles.otherTitle2}>More Category</Text>
+                </TouchableOpacity>
               </Link>
             </View>
             <View>

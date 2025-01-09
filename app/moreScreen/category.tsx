@@ -31,7 +31,7 @@ const ShortBy = () => {
       <View style={styles.header}>
         <View style={{flexDirection: 'row'}}>
           <BtnBackScreen></BtnBackScreen>
-          <Text style={styles.title}>Short By</Text>
+          <Text style={styles.title}>Category</Text>
         </View>
       </View>
 

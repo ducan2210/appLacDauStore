@@ -7,7 +7,7 @@ export const getAllProduct = async () => {
     const response = await axios.get(`${apiUrl}/GetAllProduct`);
     return response.data as typeProduct[];
   } catch (error) {
-    throw new Error('Failed to create user: ' + error);
+    throw new Error('Failed to find product: ' + error);
   }
 };
 
@@ -16,7 +16,7 @@ export const getAllProductAvailability = async () => {
     const response = await axios.get(`${apiUrl}/GetAllProductAvailability`);
     return response.data as typeProduct[];
   } catch (error) {
-    throw new Error('Failed to create user: ' + error);
+    throw new Error('Failed to find product: ' + error);
   }
 };
 
@@ -49,6 +49,50 @@ export const getProductByCategoryId = async (query: number) => {
       `${apiUrl}/GetProductByCategoryID?category_id=${query}`,
     );
 
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};
+
+export const getProductShortByTimeEndingSoonest = async () => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductShortByTimeEndingSoonest`,
+    );
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};
+
+export const getProductShortByPriceLowestFirst = async () => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductShortByPriceLowestFirst`,
+    );
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product:' + error);
+  }
+};
+
+export const getProductShortByPriceHighestFirst = async () => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductShortByPriceHighestFirst`,
+    );
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};
+
+export const getProductShortByTimeNewlyListed = async () => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductShortByTimeNewlyListed`,
+    );
     return response.data as typeProduct[];
   } catch (error) {
     throw new Error('Failed to find product: ' + error);

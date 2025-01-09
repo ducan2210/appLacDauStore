@@ -21,8 +21,8 @@ const CategoryItem = ({item, index = 0}: props) => {
   };
   const handelCategory = (name: string, id: number, categoryName: string) => {
     router.push({
-      pathname: '/moreScreen/search/[search]',
-      params: {search: name, category: id, categoryName: categoryName}, // Pass any parameters if needed
+      pathname: '/moreScreen/search/[searchResult]',
+      params: {searchResult: name, category: id, categoryName: categoryName}, // Pass any parameters if needed
     });
   };
 
