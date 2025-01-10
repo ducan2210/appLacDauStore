@@ -40,7 +40,7 @@ export const deleteItemInCart = async (
   product_id: number,
 ) => {
   try {
-    const response = await axios.delete(
+    const response = await axiosInstance.delete(
       `${apiUrl}/DeleteItemInCart?user_id=${user_id}&&product_id=${product_id}`,
     );
 

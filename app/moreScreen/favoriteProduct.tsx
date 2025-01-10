@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {AntDesign} from '@expo/vector-icons';
 import {
@@ -14,8 +14,15 @@ import {
 } from 'react-native-responsive-screen';
 import ListProduct from '@/components/productComponent/listProduct';
 import BtnBackScreen from '@/components/BtnBackScreen';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/redux/rootReducer';
 const FavoriteProduct = () => {
   const router = useRouter();
+  const wishList = useSelector((state: RootState) => state.wishList.wishList);
+  useEffect(() => {
+    console.log(wishList);
+  }, [wishList]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

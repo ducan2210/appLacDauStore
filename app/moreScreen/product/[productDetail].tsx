@@ -23,6 +23,7 @@ import BtnBackScreen from '@/components/BtnBackScreen';
 import BtnAddToCart from '@/components/BtnAddToCart';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
+import BtnAddToWishList from '@/components/BtnAddToWishList';
 const ProductDetail = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const {
@@ -57,7 +58,9 @@ const ProductDetail = () => {
           <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
             {productName}
           </Text>
-          <AntDesign style={{}} name="hearto" size={wp(7)} color="#9098B1" />
+          <BtnAddToWishList
+            user_id={user.user_id}
+            product_id={product_id}></BtnAddToWishList>
         </View>
         <View style={{marginTop: hp(1), marginBottom: hp(3)}}>
           <StarRating rating={4}></StarRating>

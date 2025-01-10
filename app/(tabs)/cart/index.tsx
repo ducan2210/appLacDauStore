@@ -12,11 +12,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import ListItemInCart from '@/components/CartComponent/ListItemInCart';
+
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import {AntDesign} from '@expo/vector-icons';
 import {Link} from 'expo-router';
+import ListItemInCart from '@/components/cartComponent/ListItemInCart';
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
   return (

@@ -9,6 +9,7 @@ import {login} from '@/hooks/api/useAuth';
 import {useAppDispatch} from '@/redux/store'; // Sử dụng useAppDispatch
 import {loadUser} from '@/redux/slices/userSlice';
 import {loadCart} from '@/redux/slices/cartSlice';
+import {loadWishList} from '@/redux/slices/wishListSlice';
 
 const BtnSignin = ({
   userName,
@@ -28,6 +29,7 @@ const BtnSignin = ({
       if (response && response.token) {
         dispatch(loadUser(userName)); // Gọi loadUser với username
         dispatch(loadCart(response.user.user_id));
+        dispatch(loadWishList(response.user.user_id));
         // Xử lý đăng nhập thành công
         Alert.alert('Success', 'Logged in successfully!');
         // Điều hướng đến màn hình chính sau khi đăng nhập

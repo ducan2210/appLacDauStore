@@ -27,6 +27,7 @@ import {getCategoryRoot} from '@/hooks/api/useCategory';
 import {typeCategory} from '@/models/category.model';
 import ProductsRecommend from '@/components/productsRecommend';
 import Loading from '@/components/Loading';
+import BtnGoToWishList from '@/components/BtnGoToWishList';
 
 const Home = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -76,18 +77,7 @@ const Home = () => {
         <>
           <View style={styles.header}>
             <SearchBar onTextSearchChange={handleTextSearchChange}></SearchBar>
-            <TouchableOpacity>
-              <Link href={'/moreScreen/favoriteProduct'} asChild>
-                <TouchableOpacity>
-                  <AntDesign
-                    style={{}}
-                    name="hearto"
-                    size={wp(7)}
-                    color="#9098B1"
-                  />
-                </TouchableOpacity>
-              </Link>
-            </TouchableOpacity>
+            <BtnGoToWishList></BtnGoToWishList>
             <Link href={'/moreScreen/notification'} asChild>
               <TouchableOpacity>
                 <AntDesign
