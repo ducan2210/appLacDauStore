@@ -20,3 +20,22 @@ export const addToWishList = async (
     throw new Error('Add failed');
   }
 };
+
+export const deleteItemInWishList = async (
+  dispatch: any,
+  user_id: number,
+  product_id: number,
+) => {
+  try {
+    console.log('user_id', user_id);
+    console.log('product_id', product_id);
+    const response = await axiosInstance.delete(
+      `${apiUrl}/DeleteItemInWishList?user_id=${user_id}&&product_id=${product_id}`,
+    );
+    dispatch(loadWishList(user_id));
+    return response.data;
+  } catch (error) {
+    console.error('Delete failed:', error);
+    throw new Error('Delete failed');
+  }
+};

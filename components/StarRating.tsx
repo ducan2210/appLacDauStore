@@ -16,7 +16,7 @@ type Props = {
 const StarRating = ({
   rating,
   maxStars = 5,
-  size = wp(7),
+  size = wp(5),
   onRate,
   isEditable = false,
 }: Props) => {

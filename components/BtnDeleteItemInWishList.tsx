@@ -7,8 +7,9 @@ import {
 import {addToCart, deleteItemInCart} from '@/hooks/api/useCart';
 import {useAppDispatch} from '@/redux/store';
 import {Feather} from '@expo/vector-icons';
+import {deleteItemInWishList} from '@/hooks/api/useWishList';
 
-const BtnDeleteItemInCart = ({
+const BtnDeleteItemInWishList = ({
   user_id,
   product_id,
 }: {
@@ -19,7 +20,7 @@ const BtnDeleteItemInCart = ({
   const handleDeleteItem = () => {
     Alert.alert(
       'Confirmation',
-      'Are you sure you want to delete this item from your cart?',
+      'Are you sure you want to delete this item from your wish list?',
       [
         {
           text: 'No',
@@ -28,7 +29,7 @@ const BtnDeleteItemInCart = ({
         },
         {
           text: 'Yes',
-          onPress: () => deleteItemInCart(dispatch, user_id, product_id),
+          onPress: () => deleteItemInWishList(dispatch, user_id, product_id),
         },
       ],
       {cancelable: false},
@@ -41,4 +42,4 @@ const BtnDeleteItemInCart = ({
     </TouchableOpacity>
   );
 };
-export default BtnDeleteItemInCart;
+export default BtnDeleteItemInWishList;

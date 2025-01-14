@@ -36,18 +36,6 @@ const ListProduct = ({
   );
 };
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#9098B1',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default ListProduct;

@@ -6,7 +6,7 @@ import {
   View,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, useLocalSearchParams, useRouter} from 'expo-router';
 import {AntDesign} from '@expo/vector-icons';
 import {
@@ -24,27 +24,29 @@ import BtnAddToCart from '@/components/BtnAddToCart';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import BtnAddToWishList from '@/components/BtnAddToWishList';
+import {typeProduct} from '@/models/product.model';
 const ProductDetail = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const {
-    productDetail,
-    productDescription,
-    productName,
-    productImage_url,
-    productStock,
-    productCategory_id,
-    productSupplier_id,
-    productDiscount_price,
-    productPrice,
-  } = useLocalSearchParams();
-
+  const [products, setProducts] = useState<typeProduct>();
+  const {productDetail} = useLocalSearchParams();
+  useEffect(() => {
+    try {
+      const decodedProduct = productDetail
+        ? decodeURIComponent(productDetail as string)
+        : '[]';
+      const dataArray = JSON.parse(decodedProduct);
+      setProducts(dataArray);
+    } catch (error) {
+      console.error('Error parsing sort parameter:', error);
+    }
+  }, [productDetail]);
   const product_id = Number(productDetail); // Chuyển 'product_id' sang kiểu số
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{flexDirection: 'row'}}>
           <BtnBackScreen></BtnBackScreen>
-          <Text style={styles.title}>{productName}</Text>
+          <Text style={styles.title}>{products?.name}</Text>
         </View>
       </View>
       <ScrollView style={styles.body} showsVerticalScrollIndicator={false}>
@@ -56,17 +58,17 @@ const ProductDetail = () => {
             marginTop: hp(2),
           }}>
           <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
-            {productName}
+            {products?.name}
           </Text>
           <BtnAddToWishList
             user_id={user.user_id}
-            product_id={product_id}></BtnAddToWishList>
+            product_id={products?.product_id as number}></BtnAddToWishList>
         </View>
         <View style={{marginTop: hp(1), marginBottom: hp(3)}}>
           <StarRating rating={4}></StarRating>
         </View>
         <Text style={{fontSize: wp(7), fontWeight: 'bold', color: '#40BFFF'}}>
-          {productPrice}$
+          {products?.price}$
         </Text>
         <View>
           <View style={styles.other}>
@@ -102,10 +104,10 @@ const ProductDetail = () => {
           <Text style={styles.otherTitle1}>You Might Also Like</Text>
         </View>
         {/* <ListProduct data={ProductData}></ListProduct> */}
-        {user && product_id ? (
+        {user && products?.product_id ? (
           <BtnAddToCart
             user_id={user.user_id}
-            product_id={product_id}
+            product_id={products?.product_id}
             quantity={1}
           />
         ) : (

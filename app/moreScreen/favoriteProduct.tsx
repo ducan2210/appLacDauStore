@@ -16,13 +16,10 @@ import ListProduct from '@/components/productComponent/listProduct';
 import BtnBackScreen from '@/components/BtnBackScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
+import WishList from '@/components/wishListComponent/wishList';
 const FavoriteProduct = () => {
   const router = useRouter();
   const wishList = useSelector((state: RootState) => state.wishList.wishList);
-  useEffect(() => {
-    console.log(wishList);
-  }, [wishList]);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -33,10 +30,7 @@ const FavoriteProduct = () => {
       </View>
 
       <ScrollView style={styles.body}>
-        {/* <ListProduct
-          data={ProductData}
-          horizontal={false}
-          numColumns={2}></ListProduct> */}
+        <WishList wishListData={wishList}></WishList>
       </ScrollView>
     </View>
   );
