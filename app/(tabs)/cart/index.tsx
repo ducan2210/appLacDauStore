@@ -95,7 +95,7 @@ const Cart = () => {
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-                  Items (0)
+                  Items ({cart.length})
                 </Text>
                 <Text style={{fontSize: wp(4)}}>Gia tien</Text>
               </View>
@@ -104,14 +104,14 @@ const Cart = () => {
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Shipping
                 </Text>
-                <Text style={{fontSize: wp(4)}}>Gia tien</Text>
+                <Text style={{fontSize: wp(4)}}>$10</Text>
               </View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Import charges
                 </Text>
-                <Text style={{fontSize: wp(4)}}>Gia tien</Text>
+                <Text style={{fontSize: wp(4)}}>$10</Text>
               </View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>

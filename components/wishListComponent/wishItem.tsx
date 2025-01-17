@@ -11,6 +11,8 @@ import {
 import StarRating from '../StarRating';
 import {Feather} from '@expo/vector-icons';
 import BtnDeleteItemInWishList from '../BtnDeleteItemInWishList';
+import {typePromotion} from '@/models/promotion.model';
+import {getPromotionByProductID} from '@/hooks/api/usePromotion';
 const WishItem = ({item}: {item: typeWishList}) => {
   const [wishItem, setWishItem] = useState<typeProduct>();
   useEffect(() => {
@@ -24,6 +26,19 @@ const WishItem = ({item}: {item: typeWishList}) => {
     };
     fetchItem();
   }, [item]);
+
+  const [promotion, setPromotion] = useState<typePromotion>();
+  useEffect(() => {
+    const findPromotion = async () => {
+      const promotion = await getPromotionByProductID(item.product_id);
+      if (promotion) {
+        setPromotion(promotion);
+      }
+    };
+
+    findPromotion();
+  }, [item]);
+
   return (
     <Link
       href={{
@@ -58,10 +73,34 @@ const WishItem = ({item}: {item: typeWishList}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text
-              style={{fontSize: wp(7), fontWeight: 'bold', color: '#40BFFF'}}>
-              {wishItem?.price} $
-            </Text>
+            {wishItem?.discount_price ? (
+              <View style={{marginVertical: hp(0)}}>
+                <Text style={styles.discount_price}>
+                  ${wishItem.discount_price}
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={styles.price}>${wishItem.price}</Text>
+                  <Text
+                    style={{
+                      fontSize: wp(2.5),
+                      fontWeight: 'bold',
+                      color: 'red',
+                      marginLeft: wp(2),
+                    }}>
+                    {Math.floor(promotion?.discount_percent as number)}% Off
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <Text
+                style={{
+                  fontSize: wp(4),
+                  color: '#40BFFF',
+                  fontWeight: 'bold',
+                }}>
+                ${wishItem?.price}
+              </Text>
+            )}
             <BtnDeleteItemInWishList
               user_id={item.user_id}
               product_id={item.product_id}></BtnDeleteItemInWishList>
@@ -92,5 +131,17 @@ const styles = StyleSheet.create({
     borderRadius: wp(2),
     marginRight: wp(5),
     padding: wp(2),
+  },
+  discount_price: {
+    fontSize: wp(4),
+    color: '#40BFFF',
+    fontWeight: 'bold',
+    marginVertical: hp(1),
+  },
+  price: {
+    fontSize: wp(4),
+    color: '#9098B1',
+    fontWeight: 'bold',
+    textDecorationLine: 'line-through',
   },
 });
