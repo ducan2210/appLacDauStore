@@ -15,13 +15,14 @@ import {
 } from 'react-native-responsive-screen';
 import {getProductById} from '@/hooks/api/useProduct';
 import {typeProduct} from '@/models/product.model';
-import {useSelector} from 'react-redux';
-import {RootState} from '@/redux/rootReducer';
 import BtnDeleteItemInCart from '../BtnDeleteItemInCart';
+import {updateItemInCart} from '@/hooks/api/useCart';
+import {useAppDispatch} from '@/redux/store';
 
 const CartItem = ({item}: {item: typeCart}) => {
   const [cart, setCart] = useState<typeProduct>();
   const [value, setValue] = useState(`${item.quantity}`);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const fetchItem = async () => {
       const result = await getProductById(item.product_id);
@@ -38,12 +39,19 @@ const CartItem = ({item}: {item: typeCart}) => {
   const handleIncrease = () => {
     const currentValue = parseInt(value, 10); // Chuyển giá trị thành số
     setValue((currentValue + 1).toString()); // Tăng giá trị và chuyển lại thành chuỗi
+    updateItemInCart(dispatch, item.user_id, item.product_id, currentValue + 1);
   };
 
   const handleDecrease = () => {
     const currentValue = parseInt(value, 10); // Chuyển giá trị thành số
     if (currentValue > 1) {
       setValue((currentValue - 1).toString()); // Giảm giá trị và chuyển lại thành chuỗi
+      updateItemInCart(
+        dispatch,
+        item.user_id,
+        item.product_id,
+        currentValue - 1,
+      );
     }
   };
   const handleBlur = () => {
@@ -95,7 +103,10 @@ const CartItem = ({item}: {item: typeCart}) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <Text>{cart?.price}$</Text>
+          {cart?.price && (
+            <Text>{Math.trunc(cart?.price * Number(value))}$</Text>
+          )}
+
           <View style={{flexDirection: 'row'}}>
             {/* Nút giảm số lượng */}
             <TouchableOpacity

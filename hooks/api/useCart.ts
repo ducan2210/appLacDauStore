@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {apiUrl} from './apiURL';
 import axiosInstance from './axiosInstance';
-import {loadCart} from '@/redux/slices/cartSlice';
+import {loadCalculateCartTotal, loadCart} from '@/redux/slices/cartSlice';
 export const addToCart = async (
   dispatch: any,
   user_id: number,
@@ -15,6 +15,7 @@ export const addToCart = async (
       quantity,
     });
     dispatch(loadCart(user_id));
+    dispatch(loadCalculateCartTotal(user_id));
     return response.data;
   } catch (error) {
     console.error('Add failed:', error);
@@ -49,5 +50,24 @@ export const deleteItemInCart = async (
   } catch (error) {
     console.error('Delete failed:', error);
     throw new Error('Delete failed');
+  }
+};
+
+export const updateItemInCart = async (
+  dispatch: any,
+  user_id: number,
+  product_id: number,
+  quantity: number,
+) => {
+  try {
+    const response = await axiosInstance.put(
+      `${apiUrl}/UpdateItemInCart?user_id=${user_id}&&product_id=${product_id}&&quantity=${quantity}`,
+    );
+    dispatch(loadCart(user_id));
+    dispatch(loadCalculateCartTotal(user_id));
+    return response.data;
+  } catch (error) {
+    console.error('Update failed:', error);
+    throw new Error('Update failed');
   }
 };

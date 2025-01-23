@@ -17,9 +17,10 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import {AntDesign} from '@expo/vector-icons';
 import {Link} from 'expo-router';
-import ListItemInCart from '@/components/cartComponent/ListItemInCart';
+import ListItemInCart from '@/components/CartComponent/ListItemInCart';
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
+  const totalPrice = useSelector((state: RootState) => state.cart.totalPrice);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -97,7 +98,7 @@ const Cart = () => {
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Items ({cart.length})
                 </Text>
-                <Text style={{fontSize: wp(4)}}>Gia tien</Text>
+                <Text style={{fontSize: wp(4)}}>{totalPrice}</Text>
               </View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
