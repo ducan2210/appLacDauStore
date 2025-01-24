@@ -23,7 +23,6 @@ export const loadCart = createAsyncThunk(
 export const loadCalculateCartTotal = createAsyncThunk(
   'cart/GetCalculateCartTotal',
   async (userid: number) => {
-    console.log(userid);
     try {
       const response = await axios.get(
         `${apiUrl}/GetCalculateCartTotal?user_id=${userid}`,

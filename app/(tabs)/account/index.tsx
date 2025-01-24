@@ -33,15 +33,17 @@ const index = () => {
           />
           <Text style={styles.optionTitle}>Order</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Ionicons
-            name="location-outline"
-            size={24}
-            color="#40BFFF"
-            style={{width: wp(10)}}
-          />
-          <Text style={styles.optionTitle}>Address</Text>
-        </TouchableOpacity>
+        <Link href={'/moreScreen/accountSetting/address'} asChild>
+          <TouchableOpacity style={styles.option}>
+            <Ionicons
+              name="location-outline"
+              size={24}
+              color="#40BFFF"
+              style={{width: wp(10)}}
+            />
+            <Text style={styles.optionTitle}>Address</Text>
+          </TouchableOpacity>
+        </Link>
         <TouchableOpacity style={styles.option}>
           <MaterialIcons
             name="payment"

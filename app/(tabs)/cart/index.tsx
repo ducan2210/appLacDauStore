@@ -98,7 +98,7 @@ const Cart = () => {
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Items ({cart.length})
                 </Text>
-                <Text style={{fontSize: wp(4)}}>{totalPrice}</Text>
+                <Text style={{fontSize: wp(4)}}>${totalPrice}</Text>
               </View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -119,7 +119,15 @@ const Cart = () => {
                 <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
                   Total Price
                 </Text>
-                <Text style={{fontSize: wp(4)}}>Gia tien</Text>
+                <Text
+                  style={{
+                    fontSize: wp(4),
+                    color: '#40BFFF',
+                    fontWeight: 'bold',
+                    // marginTop: hp(1),
+                  }}>
+                  ${totalPrice + 10 + 10}
+                </Text>
               </View>
             </View>
             <TouchableOpacity style={styles.btnCheckOut}>

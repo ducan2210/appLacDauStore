@@ -24,7 +24,7 @@ const ListProduct = ({
   return (
     <FlatList
       scrollEnabled={horizontal}
-      data={data} // Sử dụng sortedData để hiển thị danh sách đã sắp xếp
+      data={data}
       horizontal={horizontal}
       numColumns={numColumns}
       showsHorizontalScrollIndicator={false}

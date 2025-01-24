@@ -59,11 +59,11 @@ const BtnAddToWishList = ({
     <View>
       {!isProductInWishList ? (
         <TouchableOpacity onPress={handleAddToCart}>
-          <AntDesign name="hearto" size={wp(7)} color="#9098B1" />
+          <AntDesign name="hearto" size={wp(5)} color="#9098B1" />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={handleRemoveFromWishList}>
-          <AntDesign name="heart" size={wp(7)} color="red" />
+          <AntDesign name="heart" size={wp(5)} color="red" />
         </TouchableOpacity>
       )}
     </View>

@@ -13,6 +13,7 @@ const _layout = () => {
       <Stack.Screen name="changePhoneNumber" options={{headerShown: false}} />
       <Stack.Screen name="changeName" options={{headerShown: false}} />
       <Stack.Screen name="changeAvatar" options={{headerShown: false}} />
+      <Stack.Screen name="address" options={{headerShown: false}} />
     </Stack>
   );
 };

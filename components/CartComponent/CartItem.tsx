@@ -18,10 +18,14 @@ import {typeProduct} from '@/models/product.model';
 import BtnDeleteItemInCart from '../BtnDeleteItemInCart';
 import {updateItemInCart} from '@/hooks/api/useCart';
 import {useAppDispatch} from '@/redux/store';
+import {typePromotion} from '@/models/promotion.model';
+import {getPromotionByProductID} from '@/hooks/api/usePromotion';
+import BtnAddToWishList from '../BtnAddToWishList';
 
 const CartItem = ({item}: {item: typeCart}) => {
   const [cart, setCart] = useState<typeProduct>();
   const [value, setValue] = useState(`${item.quantity}`);
+  const [promotion, setPromotion] = useState<typePromotion>();
   const dispatch = useAppDispatch();
   useEffect(() => {
     const fetchItem = async () => {
@@ -33,8 +37,18 @@ const CartItem = ({item}: {item: typeCart}) => {
         console.log('No cart found');
       }
     };
+    const findPromotion = async () => {
+      const promotion = await getPromotionByProductID(item.product_id);
+      if (promotion) {
+        setPromotion(promotion);
+      }
+    };
+
+    findPromotion();
     fetchItem();
   }, [item]);
+
+  useEffect(() => {}, [item]);
 
   const handleIncrease = () => {
     const currentValue = parseInt(value, 10); // Chuyển giá trị thành số
@@ -89,9 +103,11 @@ const CartItem = ({item}: {item: typeCart}) => {
             style={{
               flexDirection: 'row',
             }}>
-            <TouchableOpacity style={{marginRight: wp(1)}}>
-              <AntDesign name="hearto" size={wp(5)} color="black" />
-            </TouchableOpacity>
+            <View style={{marginRight: wp(2)}}>
+              <BtnAddToWishList
+                user_id={item.user_id}
+                product_id={item.product_id as number}></BtnAddToWishList>
+            </View>
             <BtnDeleteItemInCart
               user_id={item.user_id}
               product_id={item.product_id}></BtnDeleteItemInCart>
@@ -103,8 +119,22 @@ const CartItem = ({item}: {item: typeCart}) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          {cart?.price && (
-            <Text>{Math.trunc(cart?.price * Number(value))}$</Text>
+          {cart?.discount_price ? (
+            <View style={{marginVertical: hp(0)}}>
+              <Text style={styles.discount_price}>
+                ${(cart.discount_price * Number(value)).toFixed(2)}
+              </Text>
+            </View>
+          ) : (
+            <Text
+              style={{
+                fontSize: wp(4),
+                color: '#40BFFF',
+                fontWeight: 'bold',
+                // marginTop: hp(1),
+              }}>
+              <Text>${((cart?.price ?? 0) * Number(value)).toFixed(2)}</Text>
+            </Text>
           )}
 
           <View style={{flexDirection: 'row'}}>
@@ -170,5 +200,17 @@ const styles = StyleSheet.create({
     height: hp(10),
     justifyContent: 'space-between',
     marginBottom: hp(3),
+  },
+  discount_price: {
+    fontSize: wp(4),
+    color: '#40BFFF',
+    fontWeight: 'bold',
+    marginVertical: hp(1),
+  },
+  price: {
+    fontSize: wp(4),
+    color: '#9098B1',
+    fontWeight: 'bold',
+    textDecorationLine: 'line-through',
   },
 });

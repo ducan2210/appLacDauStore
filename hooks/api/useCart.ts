@@ -46,6 +46,7 @@ export const deleteItemInCart = async (
     );
 
     dispatch(loadCart(user_id));
+    dispatch(loadCalculateCartTotal(user_id));
     return response.data;
   } catch (error) {
     console.error('Delete failed:', error);

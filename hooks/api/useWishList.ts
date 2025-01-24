@@ -12,7 +12,6 @@ export const addToWishList = async (
       user_id,
       product_id,
     });
-
     dispatch(loadWishList(user_id));
     return response.data;
   } catch (error) {
