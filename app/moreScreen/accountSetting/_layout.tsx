@@ -14,6 +14,7 @@ const _layout = () => {
       <Stack.Screen name="changeName" options={{headerShown: false}} />
       <Stack.Screen name="changeAvatar" options={{headerShown: false}} />
       <Stack.Screen name="address" options={{headerShown: false}} />
+      <Stack.Screen name="addAddress" options={{headerShown: false}} />
     </Stack>
   );
 };

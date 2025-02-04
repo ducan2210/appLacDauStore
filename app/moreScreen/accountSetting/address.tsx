@@ -1,4 +1,10 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import {
   widthPercentageToDP as wp,
@@ -7,58 +13,84 @@ import {
 import BtnBackScreen from '@/components/BtnBackScreen';
 import BtnAddAddress from '@/components/BtnAddAddress';
 import {Feather} from '@expo/vector-icons';
+import {Link} from 'expo-router';
+
 const Address = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <BtnBackScreen></BtnBackScreen>
+        <BtnBackScreen />
         <Text style={styles.title}>Address</Text>
       </View>
-      <View style={styles.body}>
-        <View
-          style={{
-            marginTop: hp(2),
-            padding: wp(4),
-            borderColor: '#9098B1',
-            borderWidth: wp(0.1),
-            borderRadius: wp(2),
-          }}>
-          <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>Priscekila</Text>
-          <Text
-            style={{fontSize: wp(4), color: '#9098B1', marginVertical: hp(2)}}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.addressContainer}>
+          <Text style={styles.name}>Priscekila</Text>
+          <Text style={styles.address}>
             3711 Spring Hill Rd undefined Tallahassee, Nevada 52874 United
             States
           </Text>
-          <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-            +99 1234567890
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: hp(2),
-            }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#40BFFF',
-                height: hp(8),
-                width: wp(25),
-
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: wp(2),
-              }}>
-              <Text
-                style={{fontSize: wp(5), fontWeight: 'bold', color: 'white'}}>
-                Edit
-              </Text>
+          <Text style={styles.phone}>+99 1234567890</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{marginLeft: wp(4)}}>
+            <TouchableOpacity style={styles.trashButton}>
               <Feather name="trash" size={wp(7)} color="#9098B1" />
             </TouchableOpacity>
           </View>
         </View>
-        <BtnAddAddress></BtnAddAddress>
+        <View style={styles.addressContainer}>
+          <Text style={styles.name}>Priscekila</Text>
+          <Text style={styles.address}>
+            3711 Spring Hill Rd undefined Tallahassee, Nevada 52874 United
+            States
+          </Text>
+          <Text style={styles.phone}>+99 1234567890</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.trashButton}>
+              <Feather name="trash" size={wp(7)} color="#9098B1" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.addressContainer}>
+          <Text style={styles.name}>Priscekila</Text>
+          <Text style={styles.address}>
+            3711 Spring Hill Rd undefined Tallahassee, Nevada 52874 United
+            States
+          </Text>
+          <Text style={styles.phone}>+99 1234567890</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.trashButton}>
+              <Feather name="trash" size={wp(7)} color="#9098B1" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.btnContainer}>
+        <Link href={'/moreScreen/accountSetting/addAddress'} asChild>
+          <TouchableOpacity
+            style={{
+              marginTop: hp(5),
+              backgroundColor: '#40BFFF',
+              height: hp(8),
+              marginBottom: hp(7),
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: wp(2),
+            }}>
+            <Text style={{fontSize: wp(5), fontWeight: 'bold', color: 'white'}}>
+              Add Address
+            </Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
@@ -74,18 +106,68 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-
     alignItems: 'center',
     height: hp(8),
     borderBottomWidth: wp(0.1),
     borderColor: '#9098B1',
   },
-  body: {
-    marginTop: hp(2),
-  },
   title: {
     fontSize: wp(5),
     fontWeight: 'bold',
     marginLeft: wp(3),
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: hp(20), // Đảm bảo nội dung không bị che bởi nút
+  },
+  addressContainer: {
+    marginTop: hp(2),
+    padding: wp(4),
+    borderColor: '#9098B1',
+    borderWidth: wp(0.1),
+    borderRadius: wp(2),
+  },
+  name: {
+    fontSize: wp(4),
+    fontWeight: 'bold',
+  },
+  address: {
+    fontSize: wp(4),
+    color: '#9098B1',
+    marginVertical: hp(2),
+  },
+  phone: {
+    fontSize: wp(4),
+    color: '#9098B1',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: hp(2),
+  },
+  editButton: {
+    backgroundColor: '#40BFFF',
+    height: hp(8),
+    width: wp(25),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: wp(2),
+  },
+  editButtonText: {
+    fontSize: wp(5),
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  trashButton: {
+    marginLeft: wp(4),
+  },
+  btnContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: wp(3),
+
+    backgroundColor: '#f2f2f2', // Đặt màu nền nếu cần
   },
 });

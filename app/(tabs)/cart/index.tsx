@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -18,9 +19,32 @@ import {RootState} from '@/redux/rootReducer';
 import {AntDesign} from '@expo/vector-icons';
 import {Link} from 'expo-router';
 import ListItemInCart from '@/components/CartComponent/ListItemInCart';
+import {getPromotionByCode} from '@/hooks/api/usePromotion';
+import {typePromotion} from '@/models/promotion.model';
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
+  const [coupon, setCoupon] = useState('');
   const totalPrice = useSelector((state: RootState) => state.cart.totalPrice);
+  const [promotion, setPromotion] = useState<typePromotion>();
+  const textInputRef = useRef<TextInput>(null);
+  const handleApplyCoupon = () => {
+    if (textInputRef.current) {
+      textInputRef.current.blur();
+    }
+    const findPromotion = async () => {
+      const promotion = await getPromotionByCode(coupon);
+      console.log(promotion);
+      if (promotion) {
+        setPromotion(promotion);
+      } else {
+        Alert.alert('Error', 'Invalid coupon code');
+        setCoupon('');
+        setPromotion(undefined);
+      }
+    };
+    findPromotion();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -59,12 +83,23 @@ const Cart = () => {
                   justifyContent: 'space-between',
                   borderColor: '#9098B1',
                 }}>
-                <View style={{}}>
-                  <View style={{paddingLeft: wp(5)}}>
-                    <TextInput placeholder="Enter Cupon Code" />
-                  </View>
-                </View>
+                <TextInput
+                  value={coupon}
+                  ref={textInputRef}
+                  onChangeText={text => setCoupon(text)}
+                  placeholder="Enter coupon Code"
+                  style={{
+                    padding: hp(2),
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    flex: 1,
+                    borderRadius: wp(1),
+                    alignItems: 'center',
+                  }}
+                />
+
                 <TouchableOpacity
+                  onPress={() => handleApplyCoupon()}
                   style={{
                     width: wp(25), // Chỉnh lại width thay vì sử dụng flex: 0.2
                     justifyContent: 'center',
@@ -114,20 +149,59 @@ const Cart = () => {
                 </Text>
                 <Text style={{fontSize: wp(4)}}>$10</Text>
               </View>
+              {promotion && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={{fontSize: wp(4), color: '#9098B1'}}>
+                    Total discount coupon
+                  </Text>
+                  <Text style={{fontSize: wp(4), color: 'red'}}>
+                    {' '}
+                    <Text>
+                      -$
+                      {(
+                        (totalPrice * promotion.discount_percent) /
+                        100
+                      ).toFixed(2)}
+                    </Text>
+                  </Text>
+                </View>
+              )}
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
                   Total Price
                 </Text>
-                <Text
-                  style={{
-                    fontSize: wp(4),
-                    color: '#40BFFF',
-                    fontWeight: 'bold',
-                    // marginTop: hp(1),
-                  }}>
-                  ${totalPrice + 10 + 10}
-                </Text>
+                {promotion ? (
+                  <Text
+                    style={{
+                      fontSize: wp(4),
+                      color: '#40BFFF',
+                      fontWeight: 'bold',
+                      // marginTop: hp(1),
+                    }}>
+                    $
+                    {(
+                      totalPrice +
+                      10 +
+                      10 -
+                      (totalPrice * promotion.discount_percent) / 100
+                    ).toFixed(2)}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: wp(4),
+                      color: '#40BFFF',
+                      fontWeight: 'bold',
+                      // marginTop: hp(1),
+                    }}>
+                    ${totalPrice + 10 + 10}
+                  </Text>
+                )}
               </View>
             </View>
             <TouchableOpacity style={styles.btnCheckOut}>

@@ -29,7 +29,6 @@ const BtnAddAddress = () => {
   return (
     <TouchableOpacity
       style={{
-        marginTop: hp(5),
         backgroundColor: '#40BFFF',
         height: hp(8),
         marginBottom: hp(7),

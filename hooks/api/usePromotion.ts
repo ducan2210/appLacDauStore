@@ -12,3 +12,15 @@ export const getPromotionByProductID = async (product_id: number) => {
     throw new Error('Load failed');
   }
 };
+
+export const getPromotionByCode = async (code: string) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetPromotionByCode?code=${code}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Load failed:', error);
+    throw new Error('Load failed');
+  }
+};
