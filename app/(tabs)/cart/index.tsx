@@ -204,12 +204,14 @@ const Cart = () => {
                 )}
               </View>
             </View>
-            <TouchableOpacity style={styles.btnCheckOut}>
-              <Text
-                style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
-                Check Out
-              </Text>
-            </TouchableOpacity>
+            <Link href={'/moreScreen/order/shipTo'} asChild>
+              <TouchableOpacity style={styles.btnCheckOut}>
+                <Text
+                  style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
+                  Check Out
+                </Text>
+              </TouchableOpacity>
+            </Link>
           </View>
         </ScrollView>
       )}

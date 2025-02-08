@@ -44,7 +44,6 @@ export const deleteItemInCart = async (
     const response = await axiosInstance.delete(
       `${apiUrl}/DeleteItemInCart?user_id=${user_id}&&product_id=${product_id}`,
     );
-
     dispatch(loadCart(user_id));
     dispatch(loadCalculateCartTotal(user_id));
     return response.data;
