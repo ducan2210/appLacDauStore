@@ -1,14 +1,14 @@
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-
+import {useAppDispatch} from '@/redux/store';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import {useAppDispatch} from '@/redux/store';
-import {createAddress} from '@/hooks/api/useAddress';
-const BtnAddAddress = ({
+import {updateAddress} from '@/hooks/api/useAddress';
+const BtnSaveChangedAddress = ({
   user_id,
+  address_id,
   full_name,
   phone,
   address_line,
@@ -18,6 +18,7 @@ const BtnAddAddress = ({
   country,
 }: {
   user_id: number;
+  address_id: number;
   full_name: string;
   phone: string;
   address_line: string;
@@ -30,7 +31,7 @@ const BtnAddAddress = ({
   const handleAddAddress = () => {
     Alert.alert(
       'Confirmation',
-      'Are you sure you want to add this to your address?',
+      'Are you sure you want to save the changes to this address?',
       [
         {
           text: 'No',
@@ -40,9 +41,10 @@ const BtnAddAddress = ({
         {
           text: 'Yes',
           onPress: () =>
-            createAddress(
+            updateAddress(
               dispatch,
               user_id,
+              address_id,
               full_name,
               phone,
               address_line,
@@ -69,12 +71,12 @@ const BtnAddAddress = ({
       }}
       onPress={handleAddAddress}>
       <Text style={{fontSize: wp(5), fontWeight: 'bold', color: 'white'}}>
-        Add Address
+        Save Address
       </Text>
     </TouchableOpacity>
   );
 };
 
-export default BtnAddAddress;
+export default BtnSaveChangedAddress;
 
 const styles = StyleSheet.create({});

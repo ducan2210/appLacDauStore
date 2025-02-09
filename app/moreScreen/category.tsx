@@ -7,7 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 import {getCategoryRoot, getCategoryTree} from '@/hooks/api/useCategory';
 import {typeCategory} from '@/models/category.model';
-import ListCategory from '@/components/categoryComponent/ListCategory';
+import ListCategory from '@/components/categoryComponent/listCategory';
 const ShortBy = () => {
   const [dataCategory, setDataCategory] = useState<typeCategory[]>([]);
   const [isLoading, setIsLoading] = useState(false);

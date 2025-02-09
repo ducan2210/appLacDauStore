@@ -14,7 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import ListCategory from '@/components/categoryComponent/ListCategory';
+import ListCategory from '@/components/categoryComponent/listCategory';
 import {typeCategory} from '@/models/category.model';
 import {getCategoryTree} from '@/hooks/api/useCategory';
 import {typeProduct} from '@/models/product.model';

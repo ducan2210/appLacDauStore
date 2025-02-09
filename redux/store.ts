@@ -4,12 +4,15 @@ import {TypedUseSelectorHook, useDispatch} from 'react-redux';
 import {RootState} from './rootReducer';
 import cartReducer from './slices/cartSlice';
 import wishListReducer from './slices/wishListSlice';
+import addressReducer from './slices/addressSlice';
+
 // Cấu hình store
 const store = configureStore({
   reducer: {
     user: userReducer,
     cart: cartReducer,
     wishList: wishListReducer,
+    address: addressReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -1,17 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import BtnBackScreen from '@/components/BtnBackScreen';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import BtnAddAddress from '@/components/BtnAddAddress';
+
 const Order = () => {
+  const DashedDivider = () => {
+    return <View style={styles.dashedDivider} />;
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <BtnBackScreen></BtnBackScreen>
-        <Text style={styles.title}>Address</Text>
+        <Text style={styles.title}>Order</Text>
       </View>
       <View style={styles.body}>
         <View
@@ -22,10 +25,11 @@ const Order = () => {
             borderWidth: wp(0.1),
             borderRadius: wp(2),
           }}>
-          <Text style={{fontSize: wp(4)}}>LQNSU346JK</Text>
-          <Text style={{fontSize: wp(4)}}>
+          <Text style={{fontSize: wp(4), marginBottom: hp(1)}}>LQNSU346JK</Text>
+          <Text style={{fontSize: wp(4), marginBottom: hp(1)}}>
             Order at E-comm : August 1, 2017
           </Text>
+          <DashedDivider />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{fontSize: wp(4)}}>Order Status</Text>
             <Text style={{fontSize: wp(4)}}>Shipping</Text>
@@ -39,7 +43,6 @@ const Order = () => {
             <Text style={{fontSize: wp(4)}}>$299,43</Text>
           </View>
         </View>
-        <BtnAddAddress></BtnAddAddress>
       </View>
     </View>
   );
@@ -68,5 +71,18 @@ const styles = StyleSheet.create({
     fontSize: wp(5),
     fontWeight: 'bold',
     marginLeft: wp(3),
+  },
+  dashedDividerContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: hp(1),
+  },
+  dashedDivider: {
+    width: '100%',
+    height: hp(0.1),
+    borderWidth: wp(0.3),
+    borderColor: '#9098B1',
+    borderStyle: 'dashed',
+    marginVertical: hp(1),
   },
 });

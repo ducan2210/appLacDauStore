@@ -1,14 +1,31 @@
 import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/redux/rootReducer';
 import BtnBackScreen from '@/components/BtnBackScreen';
+import BtnAddAddress from '@/components/BtnAddAddress';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import BtnAddAddress from '@/components/BtnAddAddress';
-import {useSelector} from 'react-redux';
-import {RootState} from '@/redux/rootReducer';
-const AddAddress = () => {
+import {typeAddress} from '@/models/address.model';
+import {useLocalSearchParams} from 'expo-router';
+import BtnSaveChangedAddress from '@/components/BtnSaveChangedAddress';
+const ChangeAddress = () => {
+  const [address, setAddress] = useState<typeAddress>();
+  const {changeAddress} = useLocalSearchParams();
+  useEffect(() => {
+    try {
+      const decodedAddress = changeAddress
+        ? decodeURIComponent(changeAddress as string)
+        : '[]';
+      const dataArray = JSON.parse(decodedAddress);
+      setAddress(dataArray);
+    } catch (error) {
+      console.error('Error parsing sort parameter:', error);
+    }
+  }, [changeAddress]);
+
   const user = useSelector((state: RootState) => state.user.user);
   const [fullName, setFullName] = useState('');
   const [specificAddress, setSpecificAddress] = useState('');
@@ -17,11 +34,25 @@ const AddAddress = () => {
   const [zipCode, setZipCode] = useState('');
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
+  const [address_id, setAddress_id] = useState(0);
+
+  useEffect(() => {
+    if (address) {
+      setFullName(address.full_name);
+      setSpecificAddress(address.address_line);
+      setPhoneNumber(address.phone);
+      setCity(address.city);
+      setZipCode(address.postal_code);
+      setCountry(address.country);
+      setState(address.state);
+      setAddress_id(address.address_id);
+    }
+  }, [address]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <BtnBackScreen />
-        <Text style={styles.title}>Add Address</Text>
+        <Text style={styles.title}>Edit Address</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
         <View style={{marginVertical: hp(2)}}>
@@ -94,21 +125,22 @@ const AddAddress = () => {
             numberOfLines={4}
             style={styles.textInput}></TextInput>
         </View>
-        <BtnAddAddress
+        <BtnSaveChangedAddress
           user_id={user.user_id}
+          address_id={address_id}
           full_name={fullName}
           phone={phoneNumber}
           address_line={specificAddress}
           postal_code={zipCode}
           city={city}
           state={state}
-          country={country}></BtnAddAddress>
+          country={country}></BtnSaveChangedAddress>
       </ScrollView>
     </View>
   );
 };
 
-export default AddAddress;
+export default ChangeAddress;
 
 const styles = StyleSheet.create({
   container: {

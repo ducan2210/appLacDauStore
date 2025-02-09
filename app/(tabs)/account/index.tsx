@@ -13,7 +13,7 @@ const index = () => {
         <Text style={styles.title}>Account</Text>
       </View>
       <View style={styles.body}>
-        <Link href={'/moreScreen/accountSetting/profile'} asChild>
+        <Link href={'/(tabs)/account/profile'} asChild>
           <TouchableOpacity style={styles.option}>
             <Feather
               name="user"
@@ -24,16 +24,18 @@ const index = () => {
             <Text style={styles.optionTitle}>Profile</Text>
           </TouchableOpacity>
         </Link>
-        <TouchableOpacity style={styles.option}>
-          <Feather
-            name="shopping-bag"
-            size={24}
-            color="#40BFFF"
-            style={{width: wp(10)}}
-          />
-          <Text style={styles.optionTitle}>Order</Text>
-        </TouchableOpacity>
-        <Link href={'/moreScreen/accountSetting/address'} asChild>
+        <Link href={'/(tabs)/account/order'} asChild>
+          <TouchableOpacity style={styles.option}>
+            <Feather
+              name="shopping-bag"
+              size={24}
+              color="#40BFFF"
+              style={{width: wp(10)}}
+            />
+            <Text style={styles.optionTitle}>Order</Text>
+          </TouchableOpacity>
+        </Link>
+        <Link href={'/(tabs)/account/address'} asChild>
           <TouchableOpacity style={styles.option}>
             <Ionicons
               name="location-outline"
@@ -44,7 +46,7 @@ const index = () => {
             <Text style={styles.optionTitle}>Address</Text>
           </TouchableOpacity>
         </Link>
-        <TouchableOpacity style={styles.option}>
+        {/* <TouchableOpacity style={styles.option}>
           <MaterialIcons
             name="payment"
             size={24}
@@ -52,7 +54,7 @@ const index = () => {
             style={{width: wp(10)}}
           />
           <Text style={styles.optionTitle}>Payment</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

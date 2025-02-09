@@ -6,57 +6,71 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  Linking,
-  Keyboard,
   Alert,
-  Pressable,
 } from 'react-native';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 import {useStripe} from '@stripe/stripe-react-native';
+import {router} from 'expo-router';
 const PaymentScreen = () => {
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
 
   const onCheckout = async () => {
+    setIsLoading(true);
+
     // 1. Create a payment intent
+    console.log('Creating payment intent...');
     const response = await createPaymentUrl();
 
-    // amount: Math.floor(total * 100),
-
-    if (response.error) {
+    if (!response || response.error) {
       Alert.alert('Something went wrong');
+      setIsLoading(false);
       return;
     }
+
+    console.log('Payment intent created:', response);
 
     // 2. Initialize the Payment sheet
+    console.log('Initializing payment sheet...');
     const initResponse = await initPaymentSheet({
-      merchantDisplayName: 'notJust.dev',
+      merchantDisplayName: 'LacDauStore',
       paymentIntentClientSecret: response.clientSecret,
+      returnURL: 'https://www.facebook.com', // Thêm returnURL vào đây
     });
+
     if (initResponse.error) {
-      console.log(initResponse.error);
+      console.log('Error initializing payment sheet:', initResponse.error);
       Alert.alert('Something went wrong');
+      setIsLoading(false);
       return;
     }
+
+    console.log('Payment sheet initialized');
 
     // 3. Present the Payment Sheet from Stripe
-    const paymentResponse = await presentPaymentSheet();
+    console.log('Presenting payment sheet...');
+    const {error} = await presentPaymentSheet();
 
-    if (paymentResponse.error) {
-      Alert.alert(
-        `Error code: ${paymentResponse.error.code}`,
-        paymentResponse.error.message,
-      );
-      return;
+    if (error) {
+      console.log('Error presenting payment sheet:', error);
+      Alert.alert(`Error code: ${error.code}`, error.message);
+    } else {
+      Alert.alert('Success', 'Your payment was successful!');
+      // 4. If payment ok -> create the order
+      // onCreateOrder();
+      router.push('/moreScreen/order/success');
     }
 
-    //     4242 4242 4242 4242 Succeeds and immediately processes the payment.
-    //     4000 0025 0000 3155 Requires authentication. Stripe will trigger a modal asking for the customer to authenticate.
-    //     4000 0000 0000 9995 Always fails with a decline code of insufficient_funds.
-
-    // 4. If payment ok -> create the order
-    // onCreateOrder();
+    setIsLoading(false);
   };
+
+  //     4242 4242 4242 4242 Succeeds and immediately processes the payment.
+  //     4000 0025 0000 3155 Requires authentication. Stripe will trigger a modal asking for the customer to authenticate.
+  //     4000 0000 0000 9995 Always fails with a decline code of insufficient_funds.
 
   return (
     <View style={styles.container}>
@@ -64,7 +78,7 @@ const PaymentScreen = () => {
       <Text style={styles.amount}>Số tiền: 100.000 VNĐ</Text>
       <TouchableOpacity onPress={onCheckout} style={styles.button}>
         <Text style={styles.buttonText}>
-          Checkout
+          Check Out
           {isLoading && <ActivityIndicator />}
         </Text>
       </TouchableOpacity>
@@ -77,7 +91,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingTop: hp(6),
+    paddingHorizontal: wp(3),
   },
   title: {
     fontSize: 20,
@@ -90,18 +105,20 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    backgroundColor: 'black',
-    bottom: 30,
-    width: '90%',
+    backgroundColor: '#40BFFF',
+    bottom: hp(6),
+    width: wp(90),
     alignSelf: 'center',
-    padding: 20,
-    borderRadius: 100,
+    padding: wp(5),
+    borderRadius: wp(2),
     alignItems: 'center',
+    height: hp(8),
   },
+
   buttonText: {
+    fontSize: wp(5),
+    fontWeight: 'bold',
     color: 'white',
-    fontWeight: '500',
-    fontSize: 16,
   },
 });
 

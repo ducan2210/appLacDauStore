@@ -6,6 +6,9 @@ const _layout = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{headerShown: false}} />
+      <Stack.Screen name="address" options={{headerShown: false}} />
+      <Stack.Screen name="order" options={{headerShown: false}} />
+      <Stack.Screen name="profile" options={{headerShown: false}} />
     </Stack>
   );
 };
