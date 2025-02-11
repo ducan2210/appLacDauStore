@@ -3,7 +3,8 @@ import React, {useEffect, useState} from 'react';
 import {getCartById} from '@/hooks/api/useCart';
 
 import {typeCart} from '@/models/cart.model';
-import CartItem from './CartItem';
+import CartItem from './cartItem';
+
 
 const ListItemInCart = ({cartData}: {cartData: typeCart[]}) => {
   return (

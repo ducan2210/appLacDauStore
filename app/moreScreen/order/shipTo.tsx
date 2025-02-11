@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -18,6 +18,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 const ShipTo = () => {
   const address = useSelector((state: RootState) => state.address.addresses);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

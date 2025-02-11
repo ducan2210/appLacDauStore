@@ -58,10 +58,12 @@ export const updateItemInCart = async (
   user_id: number,
   product_id: number,
   quantity: number,
+  status: number,
+  cart_id: number,
 ) => {
   try {
     const response = await axiosInstance.put(
-      `${apiUrl}/UpdateItemInCart?user_id=${user_id}&&product_id=${product_id}&&quantity=${quantity}`,
+      `${apiUrl}/UpdateItemInCart?user_id=${user_id}&&cart_id=${cart_id}&&product_id=${product_id}&&quantity=${quantity}&&status=${status}`,
     );
     dispatch(loadCart(user_id));
     dispatch(loadCalculateCartTotal(user_id));
@@ -69,5 +71,23 @@ export const updateItemInCart = async (
   } catch (error) {
     console.error('Update failed:', error);
     throw new Error('Update failed');
+  }
+};
+
+export const deleteItemInCartAfterCheckOut = async (
+  dispatch: any,
+  user_id: number,
+  cart_id: number,
+) => {
+  try {
+    const response = await axiosInstance.delete(
+      `${apiUrl}/DeleteItemInCartAfterCheckOut?user_id=${user_id}&&cart_id=${cart_id}`,
+    );
+    dispatch(loadCart(user_id));
+    dispatch(loadCalculateCartTotal(user_id));
+    return response.data;
+  } catch (error) {
+    console.error('Delete failed:', error);
+    throw new Error('Delete failed');
   }
 };

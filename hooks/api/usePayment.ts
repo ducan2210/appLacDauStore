@@ -1,10 +1,10 @@
 import axios from 'axios';
 import {apiUrl} from './apiURL';
 
-export const createPaymentUrl = async () => {
+export const createPaymentUrl = async (amount: number) => {
   try {
     const response = await axios.post(`${apiUrl}/CreatePaymentUrl`, {
-      amount: 100000,
+      amount: amount * 100,
     });
 
     return response.data;

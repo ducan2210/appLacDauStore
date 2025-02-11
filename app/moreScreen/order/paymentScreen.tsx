@@ -21,10 +21,10 @@ const PaymentScreen = () => {
 
   const onCheckout = async () => {
     setIsLoading(true);
-
+    const amount = 0;
     // 1. Create a payment intent
     console.log('Creating payment intent...');
-    const response = await createPaymentUrl();
+    const response = await createPaymentUrl(amount);
 
     if (!response || response.error) {
       Alert.alert('Something went wrong');

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {typeCart} from '@/models/cart.model';
-import {AntDesign, Feather} from '@expo/vector-icons';
+import {AntDesign, Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -17,16 +17,48 @@ import {getProductById} from '@/hooks/api/useProduct';
 import {typeProduct} from '@/models/product.model';
 import BtnDeleteItemInCart from '../BtnDeleteItemInCart';
 import {updateItemInCart} from '@/hooks/api/useCart';
-import {useAppDispatch} from '@/redux/store';
+import {RootState, useAppDispatch} from '@/redux/store';
 import {typePromotion} from '@/models/promotion.model';
 import {getPromotionByProductID} from '@/hooks/api/usePromotion';
 import BtnAddToWishList from '../BtnAddToWishList';
+import {useSelector} from 'react-redux';
 
 const CartItem = ({item}: {item: typeCart}) => {
   const [cart, setCart] = useState<typeProduct>();
   const [value, setValue] = useState(`${item.quantity}`);
-  const [promotion, setPromotion] = useState<typePromotion>();
+  const [isChose, setIsChose] = useState(item.status);
   const dispatch = useAppDispatch();
+  const moneyMustBePaid = useSelector(
+    (state: RootState) => state.cart.moneyMustBePaid,
+  );
+  useEffect(() => {
+    console.log(moneyMustBePaid);
+  }, [moneyMustBePaid]);
+
+  const handleChoseItem = () => {
+    if (isChose == 0) {
+      setIsChose(1);
+      updateItemInCart(
+        dispatch,
+        item.user_id,
+        item.product_id,
+        Number(value),
+        1,
+        item.cart_id,
+      );
+    } else {
+      setIsChose(0);
+      updateItemInCart(
+        dispatch,
+        item.user_id,
+        item.product_id,
+        Number(value),
+        0,
+        item.cart_id,
+      );
+    }
+  };
+
   useEffect(() => {
     const fetchItem = async () => {
       const result = await getProductById(item.product_id);
@@ -37,23 +69,21 @@ const CartItem = ({item}: {item: typeCart}) => {
         console.log('No cart found');
       }
     };
-    const findPromotion = async () => {
-      const promotion = await getPromotionByProductID(item.product_id);
-      if (promotion) {
-        setPromotion(promotion);
-      }
-    };
 
-    findPromotion();
     fetchItem();
   }, [item]);
-
-  useEffect(() => {}, [item]);
 
   const handleIncrease = () => {
     const currentValue = parseInt(value, 10); // Chuyển giá trị thành số
     setValue((currentValue + 1).toString()); // Tăng giá trị và chuyển lại thành chuỗi
-    updateItemInCart(dispatch, item.user_id, item.product_id, currentValue + 1);
+    updateItemInCart(
+      dispatch,
+      item.user_id,
+      item.product_id,
+      currentValue + 1,
+      item.status,
+      item.cart_id,
+    );
   };
 
   const handleDecrease = () => {
@@ -65,6 +95,8 @@ const CartItem = ({item}: {item: typeCart}) => {
         item.user_id,
         item.product_id,
         currentValue - 1,
+        item.status,
+        item.cart_id,
       );
     }
   };
@@ -75,6 +107,21 @@ const CartItem = ({item}: {item: typeCart}) => {
   };
   return (
     <View style={styles.cartItem}>
+      <TouchableOpacity onPress={handleChoseItem}>
+        {isChose == 1 ? (
+          <MaterialCommunityIcons
+            name="checkbox-intermediate"
+            size={wp(5)}
+            color="#40BFFF"
+          />
+        ) : (
+          <MaterialCommunityIcons
+            name="checkbox-blank-outline"
+            size={wp(5)}
+            color="black"
+          />
+        )}
+      </TouchableOpacity>
       <Image
         style={{flex: 0.3, height: hp(10)}}
         source={{uri: cart?.image_url}}></Image>

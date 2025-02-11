@@ -6,10 +6,11 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import {typeAddress} from '@/models/address.model';
-import {useAppDispatch} from '@/redux/store';
+import {RootState, useAppDispatch} from '@/redux/store';
 import {updateDefaultAddress} from '@/hooks/api/useAddress';
 import BtnDeleteAddress from '../BtnDeleteAddress';
 import {Link} from 'expo-router';
+import {useSelector} from 'react-redux';
 
 const AddressItem = ({item}: {item: typeAddress}) => {
   const dispatch = useAppDispatch();

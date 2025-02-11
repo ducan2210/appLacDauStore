@@ -18,22 +18,26 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import {AntDesign} from '@expo/vector-icons';
 import {Link} from 'expo-router';
-import ListItemInCart from '@/components/CartComponent/ListItemInCart';
 import {getPromotionByCode} from '@/hooks/api/usePromotion';
 import {typePromotion} from '@/models/promotion.model';
+import ListItemInCart from '@/components/cartComponent/listItemInCart';
+import {useAppDispatch} from '@/redux/store';
+import {setDiscountApplied, setMoneyMustBePaid} from '@/redux/slices/cartSlice';
+
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
   const [coupon, setCoupon] = useState('');
   const totalPrice = useSelector((state: RootState) => state.cart.totalPrice);
   const [promotion, setPromotion] = useState<typePromotion>();
   const textInputRef = useRef<TextInput>(null);
+  const dispatch = useAppDispatch();
+
   const handleApplyCoupon = () => {
     if (textInputRef.current) {
       textInputRef.current.blur();
     }
     const findPromotion = async () => {
       const promotion = await getPromotionByCode(coupon);
-      console.log(promotion);
       if (promotion) {
         setPromotion(promotion);
       } else {
@@ -43,6 +47,28 @@ const Cart = () => {
       }
     };
     findPromotion();
+  };
+
+  useEffect(() => {
+    if (promotion) {
+      dispatch(setDiscountApplied(promotion.code));
+    }
+  }, [promotion]);
+
+  const handleCheckOut = () => {
+    if (promotion) {
+      dispatch(setDiscountApplied(promotion.code));
+      dispatch(
+        setMoneyMustBePaid(
+          (
+            totalPrice -
+            (totalPrice * promotion.discount_percent) / 100
+          ).toFixed(2),
+        ),
+      );
+    } else {
+      dispatch(setMoneyMustBePaid(totalPrice.toFixed(2)));
+    }
   };
 
   return (
@@ -140,14 +166,14 @@ const Cart = () => {
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Shipping
                 </Text>
-                <Text style={{fontSize: wp(4)}}>$10</Text>
+                <Text style={{fontSize: wp(4)}}>$0</Text>
               </View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: wp(4), color: '#9098B1'}}>
                   Import charges
                 </Text>
-                <Text style={{fontSize: wp(4)}}>$10</Text>
+                <Text style={{fontSize: wp(4)}}>$0</Text>
               </View>
               {promotion && (
                 <View
@@ -185,9 +211,7 @@ const Cart = () => {
                     }}>
                     $
                     {(
-                      totalPrice +
-                      10 +
-                      10 -
+                      totalPrice -
                       (totalPrice * promotion.discount_percent) / 100
                     ).toFixed(2)}
                   </Text>
@@ -199,13 +223,15 @@ const Cart = () => {
                       fontWeight: 'bold',
                       // marginTop: hp(1),
                     }}>
-                    ${totalPrice + 10 + 10}
+                    ${totalPrice}
                   </Text>
                 )}
               </View>
             </View>
             <Link href={'/moreScreen/order/shipTo'} asChild>
-              <TouchableOpacity style={styles.btnCheckOut}>
+              <TouchableOpacity
+                onPress={handleCheckOut}
+                style={styles.btnCheckOut}>
                 <Text
                   style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
                   Check Out

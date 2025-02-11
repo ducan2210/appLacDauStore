@@ -1,7 +1,7 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import CategoryItem from './CategoryItem';
 import {typeCategory} from '@/models/category.model';
+import CategoryItem from './categoryItem';
 
 type listCategoryType = {
   data: typeCategory[];

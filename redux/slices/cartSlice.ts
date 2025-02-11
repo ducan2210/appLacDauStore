@@ -40,10 +40,18 @@ export const cartSlice = createSlice({
   initialState: {
     cart: [] as typeCart[],
     totalPrice: 0,
+    moneyMustBePaid: 0,
+    discountApplied: '',
   },
   reducers: {
     setCart: (state, action) => {
       state.cart = action.payload;
+    },
+    setMoneyMustBePaid: (state, action) => {
+      state.moneyMustBePaid = action.payload;
+    },
+    setDiscountApplied: (state, action) => {
+      state.discountApplied = action.payload;
     },
   },
   extraReducers: builder => {
@@ -56,5 +64,6 @@ export const cartSlice = createSlice({
   },
 });
 
-export const {setCart} = cartSlice.actions;
+export const {setCart, setDiscountApplied, setMoneyMustBePaid} =
+  cartSlice.actions;
 export default cartSlice.reducer;
