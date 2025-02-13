@@ -11,6 +11,7 @@ import {loadUser} from '@/redux/slices/userSlice';
 import {loadCalculateCartTotal, loadCart} from '@/redux/slices/cartSlice';
 import {loadWishList} from '@/redux/slices/wishListSlice';
 import {loadAddress} from '@/redux/slices/addressSlice';
+import {loadOrder} from '@/redux/slices/orderSlice';
 
 const BtnSignin = ({
   userName,
@@ -32,6 +33,7 @@ const BtnSignin = ({
         dispatch(loadCalculateCartTotal(response.user.user_id));
         dispatch(loadWishList(response.user.user_id));
         dispatch(loadAddress(response.user.user_id));
+        dispatch(loadOrder(response.user.user_id));
         // Xử lý đăng nhập thành công
         Alert.alert('Success', 'Logged in successfully!');
         // Điều hướng đến màn hình chính sau khi đăng nhập

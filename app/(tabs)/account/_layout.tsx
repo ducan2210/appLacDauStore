@@ -9,6 +9,7 @@ const _layout = () => {
       <Stack.Screen name="address" options={{headerShown: false}} />
       <Stack.Screen name="order" options={{headerShown: false}} />
       <Stack.Screen name="profile" options={{headerShown: false}} />
+      <Stack.Screen name="[orderDetail]" options={{headerShown: false}} />
     </Stack>
   );
 };

@@ -5,6 +5,7 @@ import {typeCart} from '@/models/cart.model';
 import {createOrderItem} from './useOrderItem';
 import {router} from 'expo-router';
 import {deleteItemInCartAfterCheckOut} from './useCart';
+import axios from 'axios';
 
 export const createOrder = async (
   cart: typeCart[],
@@ -42,5 +43,17 @@ export const createOrder = async (
   } catch (error) {
     console.error('Create failed:', error);
     throw new Error('Create failed');
+  }
+};
+
+export const getOrderById = async (order_id: number) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetOrderById?order_id=${order_id}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to find order:', error);
+    throw new Error('Failed to find order');
   }
 };

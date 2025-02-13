@@ -5,7 +5,7 @@ import {RootState} from './rootReducer';
 import cartReducer from './slices/cartSlice';
 import wishListReducer from './slices/wishListSlice';
 import addressReducer from './slices/addressSlice';
-
+import orderReducer from './slices/orderSlice';
 // Cấu hình store
 const store = configureStore({
   reducer: {
@@ -13,6 +13,7 @@ const store = configureStore({
     cart: cartReducer,
     wishList: wishListReducer,
     address: addressReducer,
+    order: orderReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

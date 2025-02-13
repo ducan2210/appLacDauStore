@@ -57,7 +57,7 @@ const PaymentMethod = () => {
       moneyMustBePaid,
       orderInformation,
       discountApplied,
-      6,
+      1,
     );
   };
 
@@ -171,7 +171,7 @@ const PaymentMethod = () => {
             total_amount={moneyMustBePaid}
             order_information={orderInformation}
             discount_applied={discountApplied}
-            payment_method_id={6}></BtnOrderConfirmation>
+            payment_method_id={2}></BtnOrderConfirmation>
         ) : (
           <TouchableOpacity
             onPress={() => onCheckout(moneyMustBePaid)}
