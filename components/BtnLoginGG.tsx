@@ -9,10 +9,12 @@ import {
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import CustomGoogleSigninButton from './CustomGoogleSigninButton';
 const BtnLoginGG = () => {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null); // Khai báo đúng kiểu User hoặc null
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  // Khai báo đúng kiểu User hoặc null
   GoogleSignin.configure({
     webClientId:
       '629627177990-9ne7td287mpqrvqn34kkss8p8ljfdhr2.apps.googleusercontent.com',
@@ -68,10 +70,11 @@ const BtnLoginGG = () => {
   if (initializing) return null;
 
   if (!user) {
-    return <GoogleSigninButton onPress={signIn}></GoogleSigninButton>;
+    // return <GoogleSigninButton onPress={signIn}></GoogleSigninButton>;
+    return <CustomGoogleSigninButton onPress={signIn} />;
   }
   return (
-    <View style={styles.container}>
+    <View>
       <Text>
         Welcome {user?.email}, {user?.displayName}
       </Text>
@@ -85,7 +88,6 @@ export default BtnLoginGG;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

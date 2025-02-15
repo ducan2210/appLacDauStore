@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
@@ -18,99 +19,91 @@ import {
 } from 'react-native-responsive-screen';
 import {Link} from 'expo-router';
 import BtnSignin from '@/components/BtnSignin';
+import BtnLoginGG from '@/components/BtnLoginGG';
+import BtnLoginFB from '@/components/BtnLoginFB';
 
 const LoginUI = () => {
   const [userName, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   return (
-    <View style={{paddingTop: hp(7), flex: 1}}>
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <EvilIcons name="location" size={wp(10)} color="black" />
-          <Text style={{fontSize: wp(5), fontWeight: '600'}}>
-            TP.HCM, Việt Nam
-          </Text>
-        </View>
-        <View style={styles.body}>
-          <Text style={{fontSize: wp(10), fontWeight: 'bold'}}>
-            Let’s Sign You In
-          </Text>
-          <Text style={{fontSize: wp(8)}}>
-            Welcome back, you’ve been missed!
-          </Text>
-          <View style={styles.infAccount}>
-            <Text style={{fontSize: wp(6)}}>Username or Email</Text>
-            <View style={styles.inputContainer}>
-              <AntDesign name="user" size={wp(7)} color="black" />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          style={{height: hp(15), width: hp(15), borderRadius: wp(7)}}
+          source={require('../../assets/images/avt.jpg')}></Image>
+        <Text
+          style={{
+            fontSize: wp(6),
+            fontWeight: 'bold',
+            marginVertical: hp(2),
+          }}>
+          Welcome To Lac Dau Store
+        </Text>
+        <Text style={{fontSize: wp(4), color: '#9098B1', marginBottom: hp(2)}}>
+          Sign in to continue
+        </Text>
+      </View>
+      <View style={styles.body}>
+        <View style={styles.infAccount}>
+          <View style={styles.inputContainer}>
+            <AntDesign name="user" size={wp(5)} color="#9098B1" />
 
-              <TextInput
-                onChangeText={text => setUsername(text)}
-                value={userName}
-                style={styles.textInput}
-                placeholder="Username"
-              />
-            </View>
-            <Text style={{fontSize: wp(6), marginTop: hp(4)}}>Password</Text>
-            <View style={styles.inputContainer}>
-              <AntDesign name="lock" size={wp(7)} color="black" />
+            <TextInput
+              onChangeText={text => setUsername(text)}
+              value={userName}
+              style={styles.textInput}
+              placeholder="Username or Email"
+            />
+          </View>
 
-              <TextInput
-                style={styles.textInput}
-                placeholder="Password"
-                secureTextEntry={true}
-                onChangeText={text => setPassword(text)}
-                value={password}
-              />
-            </View>
+          <View style={styles.inputContainer}>
+            <AntDesign name="lock" size={wp(5)} color="#9098B1" />
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Password"
+              secureTextEntry={true}
+              onChangeText={text => setPassword(text)}
+              value={password}
+            />
           </View>
         </View>
-        <View style={styles.footer}>
-          <BtnSignin userName={userName} password={password}></BtnSignin>
-          <View style={{flexDirection: 'row', marginVertical: hp(2)}}>
-            <Text style={{fontSize: wp(4)}}>Don't have an account?</Text>
-            <TouchableOpacity style={{}}>
-              <Link href={'/entry/SignUpUI'} asChild>
-                <Text style={{fontSize: wp(4), fontWeight: 'bold'}}>
-                  {' '}
-                  Sign up
-                </Text>
-              </Link>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={{
-              ...styles.btnSignInNor,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: wp(2),
-              paddingHorizontal: wp(3),
-              backgroundColor: '#C6AB59',
-            }}>
-            <AntDesign name="google" size={wp(6)} color="white" />
-            <Text style={{color: 'white', fontSize: wp(4), fontWeight: 'bold'}}>
-              Connect with Google
+      </View>
+      <View style={styles.footer}>
+        <BtnSignin userName={userName} password={password}></BtnSignin>
+        <View style={styles.lineContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.line} />
+        </View>
+        <BtnLoginGG></BtnLoginGG>
+
+        <BtnLoginFB></BtnLoginFB>
+        <TouchableOpacity style={{marginBottom: hp(1)}}>
+          <Link href={'/entry/SignUpUI'} asChild>
+            <Text
+              style={{fontSize: wp(4), fontWeight: 'bold', color: '#40BFFF'}}>
+              {' '}
+              Forgot Password?
             </Text>
-            <View></View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              ...styles.btnSignInNor,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: wp(2),
-              paddingHorizontal: wp(3),
-              backgroundColor: '#3C79E6',
-            }}>
-            <FontAwesome5 name="facebook-f" size={wp(6)} color="white" />
-            <Text style={{color: 'white', fontSize: wp(4), fontWeight: 'bold'}}>
-              Connect with Facebook
-            </Text>
-            <View></View>
+          </Link>
+        </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{fontSize: wp(4), color: '#9098B1'}}>
+            Don't have an account?
+          </Text>
+          <TouchableOpacity style={{}}>
+            <Link href={'/entry/SignUpUI'} asChild>
+              <Text
+                style={{fontSize: wp(4), fontWeight: 'bold', color: '#40BFFF'}}>
+                {' '}
+                Register
+              </Text>
+            </Link>
           </TouchableOpacity>
         </View>
-        <View style={{height: hp(10)}}></View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -119,34 +112,35 @@ export default LoginUI;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-    paddingHorizontal: wp(7),
+    paddingHorizontal: wp(5),
+    paddingTop: hp(7),
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: hp(5),
+    marginTop: hp(5),
+    justifyContent: 'center',
   },
   body: {},
   footer: {
-    marginTop: hp(5),
-
     alignItems: 'center',
   },
   infAccount: {
-    marginTop: hp(4),
+    marginTop: hp(2),
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center', // Căn giữa icon và TextInput theo trục ngang
-    borderColor: '#ccc',
-    borderBottomWidth: wp(0.2),
+    borderColor: '#9098B1',
+    borderWidth: wp(0.1),
     height: hp(6), // Chiều cao cố định cho input
+    marginBottom: hp(2),
+    padding: wp(3),
+    borderRadius: wp(2),
   },
   textInput: {
     flex: 1, // Chiếm không gian còn lại
     padding: 0, // Xóa padding mặc định
-    margin: 0, // Xóa margin mặc định
+    marginLeft: wp(2), // Xóa margin mặc định
     fontSize: wp(4),
   },
   btnSignInNor: {
@@ -156,5 +150,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: wp(2),
     width: wp(86),
+  },
+  lineContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: hp(2),
+  },
+  line: {
+    flex: 1,
+    height: hp(0.1),
+    backgroundColor: '#9098B1',
+  },
+  orText: {
+    marginHorizontal: wp(2),
+    fontSize: wp(4),
+    color: '#9098B1',
+    fontWeight: 'bold',
   },
 });

@@ -1,10 +1,18 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
-
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
+import BtnLoginGG from '@/components/BtnLoginGG';
 const index = () => {
   return (
-    <View>
-      <Text>index</Text>
+    <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <Image
+        style={{height: hp(20), width: hp(20)}}
+        source={require('../../assets/images/avt.jpg')}></Image>
+
+      <BtnLoginGG></BtnLoginGG>
     </View>
   );
 };

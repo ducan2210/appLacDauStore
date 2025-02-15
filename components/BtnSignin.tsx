@@ -56,7 +56,7 @@ const BtnSignin = ({
       disabled={loading} // Vô hiệu hóa nút khi đang loading
     >
       <Text style={{color: 'white', fontSize: wp(4), fontWeight: 'bold'}}>
-        {loading ? 'Loading...' : 'SIGN IN'}
+        {loading ? 'Loading...' : 'Sign In'}
       </Text>
     </TouchableOpacity>
   );
@@ -65,11 +65,11 @@ const BtnSignin = ({
 const styles = StyleSheet.create({
   btnSignInNor: {
     paddingVertical: hp(2),
-    backgroundColor: '#AE8C8C',
+    backgroundColor: '#40BFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: wp(2),
-    width: wp(86),
+    width: wp(90),
   },
 });
 
