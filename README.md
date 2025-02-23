@@ -42,7 +42,6 @@ Lệnh này sẽ di chuyển mã nguồn ban đầu vào thư mục **app-exampl
 - 💎 **Danh mục sản phẩm**: Phân loại theo danh mục giúp người dùng tìm kiếm nhanh chóng.
 - 💼 **Quản lý giao dịch**: Theo dõi trạng thái đơn hàng và lịch sử giao dịch.
 - 🔎 **Tìm kiếm sản phẩm**: Bộ lọc tìm kiếm sản phẩm theo tên, danh mục, giá...
-- 🌐 **Gian hàng trực tuyến**: Hỗ trợ người bán tạo gian hàng cá nhân.
 - 💬 **Trò chuyện và hỗ trợ**: Kết nối người mua và bán thông qua chat trực tuyến.
 
 ## Tìm hiểu thêm
