@@ -19,3 +19,21 @@ export const updateUser = async (
     throw new Error('Failed to update user: ' + error);
   }
 };
+
+export const createUser = async (
+  userName: string,
+  email: string,
+  password: string,
+) => {
+  try {
+    const response = await axiosInstance.post(`/CreateUser`, {
+      username: userName,
+      email: email,
+      password: password,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error create user:', error);
+    throw new Error('Failed to create user: ' + error);
+  }
+};

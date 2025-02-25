@@ -1,7 +1,7 @@
 import {
   Alert,
   Image,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TextInput,
@@ -13,7 +13,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import {AntDesign} from '@expo/vector-icons';
@@ -23,6 +22,7 @@ import {typePromotion} from '@/models/promotion.model';
 import ListItemInCart from '@/components/cartComponent/listItemInCart';
 import {useAppDispatch} from '@/redux/store';
 import {setDiscountApplied, setMoneyMustBePaid} from '@/redux/slices/cartSlice';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
@@ -31,6 +31,24 @@ const Cart = () => {
   const [promotion, setPromotion] = useState<typePromotion>();
   const textInputRef = useRef<TextInput>(null);
   const dispatch = useAppDispatch();
+
+  const [open, setOpen] = useState(false);
+  const [selectedCourier, setSelectedCourier] = useState('usps');
+  const [couriers, setCouriers] = useState([
+    {label: 'USPS', value: 'usps'},
+    {label: 'FedEx', value: 'fedex'},
+    {label: 'DHL', value: 'dhl'},
+    {label: 'GHN (Giao Hàng Nhanh)', value: 'ghn'},
+    {label: 'Viettel Post', value: 'viettel-post'},
+    {label: 'UPS', value: 'ups'},
+    {label: 'Tiki', value: 'tiki'},
+    {label: 'Shopee Express', value: 'shopee-express'},
+    {label: 'Ninja Van', value: 'ninja-van'},
+    {label: 'J&T Express', value: 'jt-express'},
+    {label: 'AhaMove', value: 'ahamove'},
+    {label: 'GrabExpress', value: 'grab-express'},
+    {label: 'Lalamove', value: 'lalamove'},
+  ]);
 
   const handleApplyCoupon = () => {
     if (textInputRef.current) {
@@ -69,14 +87,97 @@ const Cart = () => {
     } else {
       dispatch(setMoneyMustBePaid(totalPrice.toFixed(2)));
     }
+    console.log('Selected courier:', selectedCourier);
   };
+
+  const renderContent = () => (
+    <View style={styles.contentContainer}>
+      <ListItemInCart cartData={cart}></ListItemInCart>
+      <View style={styles.couponContainer}>
+        <TextInput
+          value={coupon}
+          ref={textInputRef}
+          onChangeText={text => setCoupon(text)}
+          placeholder="Enter Coupon Code"
+          style={styles.couponInput}
+        />
+        <TouchableOpacity
+          onPress={handleApplyCoupon}
+          style={styles.applyButton}>
+          <Text style={styles.applyButtonText}>Apply</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.summaryContainer}>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Items ({cart.length})</Text>
+          <Text style={styles.summaryValue}>${totalPrice}</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Shipping</Text>
+          <Text style={styles.summaryValue}>$0</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Import Charges</Text>
+          <Text style={styles.summaryValue}>$0</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>Courier</Text>
+          <DropDownPicker
+            open={open}
+            value={selectedCourier}
+            items={couriers}
+            setOpen={setOpen}
+            setValue={setSelectedCourier}
+            setItems={setCouriers}
+            placeholder="Select a courier"
+            containerStyle={styles.dropdownContainerStyle}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownList}
+            labelStyle={styles.dropdownLabel}
+            selectedItemLabelStyle={styles.selectedItemLabel}
+            listItemLabelStyle={styles.dropdownItemLabel}
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
+            maxHeight={hp(20)} // Tăng maxHeight để hiển thị nhiều mục hơn
+            zIndex={1000}
+            dropDownDirection="BOTTOM" // Đảm bảo mở xuống dưới
+          />
+        </View>
+        {promotion && (
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Discount ({promotion.code})</Text>
+            <Text style={styles.discountValue}>
+              -${((totalPrice * promotion.discount_percent) / 100).toFixed(2)}
+            </Text>
+          </View>
+        )}
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Total Price</Text>
+          <Text style={styles.totalValue}>
+            $
+            {promotion
+              ? (
+                  totalPrice -
+                  (totalPrice * promotion.discount_percent) / 100
+                ).toFixed(2)
+              : totalPrice.toFixed(2)}
+          </Text>
+        </View>
+        <Link href={'/moreScreen/order/shipTo'} asChild>
+          <TouchableOpacity onPress={handleCheckOut} style={styles.btnCheckOut}>
+            <Text style={styles.btnCheckOutText}>Check Out</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.title}>Your Cart</Text>
-        </View>
+        <Text style={styles.title}>Your Cart</Text>
       </View>
       {cart.length === 0 ? (
         <View style={styles.emptyCartContainer}>
@@ -92,156 +193,15 @@ const Cart = () => {
           </Link>
         </View>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
-          <ListItemInCart cartData={cart}></ListItemInCart>
-          <View
-            style={{
-              marginBottom: hp(5),
-            }}>
-            <View style={{paddingHorizontal: wp(3), marginTop: hp(5)}}>
-              <View
-                style={{
-                  borderWidth: wp(0.05),
-                  borderRadius: wp(2),
-                  height: hp(7),
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  borderColor: '#9098B1',
-                }}>
-                <TextInput
-                  value={coupon}
-                  ref={textInputRef}
-                  onChangeText={text => setCoupon(text)}
-                  placeholder="Enter coupon Code"
-                  style={{
-                    padding: hp(2),
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    flex: 1,
-                    borderRadius: wp(1),
-                    alignItems: 'center',
-                  }}
-                />
-
-                <TouchableOpacity
-                  onPress={() => handleApplyCoupon()}
-                  style={{
-                    width: wp(25), // Chỉnh lại width thay vì sử dụng flex: 0.2
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: hp(7),
-                    backgroundColor: '#40BFFF',
-                    borderRadius: wp(2), // Thêm borderRadius để phù hợp với viền
-                    overflow: 'hidden',
-                  }}>
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      fontSize: wp(4),
-                      color: 'white',
-                    }}>
-                    Apply
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View
-              style={{
-                marginTop: hp(5),
-                paddingHorizontal: wp(5),
-                height: hp(18),
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-                  Items ({cart.length})
-                </Text>
-                <Text style={{fontSize: wp(4)}}>${totalPrice}</Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-                  Shipping
-                </Text>
-                <Text style={{fontSize: wp(4)}}>$0</Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-                  Import charges
-                </Text>
-                <Text style={{fontSize: wp(4)}}>$0</Text>
-              </View>
-              {promotion && (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={{fontSize: wp(4), color: '#9098B1'}}>
-                    Total discount coupon
-                  </Text>
-                  <Text style={{fontSize: wp(4), color: 'red'}}>
-                    {' '}
-                    <Text>
-                      -$
-                      {(
-                        (totalPrice * promotion.discount_percent) /
-                        100
-                      ).toFixed(2)}
-                    </Text>
-                  </Text>
-                </View>
-              )}
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontWeight: 'bold', fontSize: wp(4)}}>
-                  Total Price
-                </Text>
-                {promotion ? (
-                  <Text
-                    style={{
-                      fontSize: wp(4),
-                      color: '#40BFFF',
-                      fontWeight: 'bold',
-                      // marginTop: hp(1),
-                    }}>
-                    $
-                    {(
-                      totalPrice -
-                      (totalPrice * promotion.discount_percent) / 100
-                    ).toFixed(2)}
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      fontSize: wp(4),
-                      color: '#40BFFF',
-                      fontWeight: 'bold',
-                      // marginTop: hp(1),
-                    }}>
-                    ${totalPrice}
-                  </Text>
-                )}
-              </View>
-            </View>
-            <Link href={'/moreScreen/order/shipTo'} asChild>
-              <TouchableOpacity
-                onPress={handleCheckOut}
-                style={styles.btnCheckOut}>
-                <Text
-                  style={{fontWeight: 'bold', fontSize: wp(4), color: 'white'}}>
-                  Check Out
-                </Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
-        </ScrollView>
+        <FlatList
+          data={[{}]}
+          renderItem={() => renderContent()}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={() => 'cart-content'}
+          style={styles.body}
+          contentContainerStyle={{paddingBottom: hp(4)}}
+        />
       )}
-      <View style={{height: hp(10)}}></View>
     </View>
   );
 };
@@ -251,41 +211,163 @@ export default Cart;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F7FA',
     paddingTop: hp(6),
-    paddingHorizontal: wp(3),
+    paddingHorizontal: wp(4),
   },
   body: {
     flex: 1,
-    // flexDirection: 'column',
-    // justifyContent: 'space-between',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     height: hp(8),
-    borderBottomWidth: wp(0.1),
-    borderColor: '#9098B1',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E4E8',
     marginBottom: hp(2),
   },
   title: {
-    fontSize: wp(5),
-    fontWeight: 'bold',
-    marginLeft: wp(3),
+    fontSize: wp(6),
+    fontWeight: '700',
+    color: '#223263',
+    marginLeft: wp(2),
   },
-  cartItem: {
+  contentContainer: {
+    paddingBottom: hp(2),
+  },
+  couponContainer: {
     flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: hp(3),
+    paddingHorizontal: wp(2),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(3),
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  btnCheckOut: {
-    marginTop: hp(2),
+  couponInput: {
+    flex: 1,
+    height: hp(6),
+    paddingHorizontal: wp(3),
+    fontSize: wp(4),
+    color: '#223263',
+  },
+  applyButton: {
     backgroundColor: '#40BFFF',
-    height: hp(8),
-    marginBottom: hp(7),
+    height: hp(6),
+    width: wp(25),
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: wp(3),
+  },
+  applyButtonText: {
+    color: '#FFFFFF',
+    fontSize: wp(4),
+    fontWeight: '600',
+  },
+  summaryContainer: {
+    marginTop: hp(3),
+    padding: wp(4),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(3),
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: hp(1.5),
+  },
+  summaryLabel: {
+    fontSize: wp(4),
+    color: '#6B7280',
+    width: wp(40),
+  },
+  summaryValue: {
+    fontSize: wp(4),
+    color: '#223263',
+  },
+  discountValue: {
+    fontSize: wp(4),
+    color: '#EF4444',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: hp(1),
+    paddingTop: hp(1),
+    borderTopWidth: 1,
+    borderTopColor: '#E0E4E8',
+  },
+  totalLabel: {
+    fontSize: wp(4.5),
+    fontWeight: '700',
+    color: '#223263',
+  },
+  totalValue: {
+    fontSize: wp(4.5),
+    fontWeight: '700',
+    color: '#40BFFF',
+  },
+  dropdownContainerStyle: {
+    flex: 1,
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: '#E0E4E8',
     borderRadius: wp(2),
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: wp(3),
+    height: hp(6),
+  },
+  dropdownList: {
+    borderWidth: 1,
+    borderColor: '#E0E4E8',
+    borderRadius: wp(2),
+    backgroundColor: '#FFFFFF',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  dropdownLabel: {
+    fontSize: wp(4),
+    color: '#6B7280',
+  },
+  selectedItemLabel: {
+    fontWeight: '600',
+    color: '#40BFFF',
+  },
+  dropdownItemLabel: {
+    fontSize: wp(4),
+    color: '#223263',
+  },
+  btnCheckOut: {
+    backgroundColor: '#40BFFF',
+    height: hp(7),
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: wp(3),
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    marginTop: hp(2),
+  },
+  btnCheckOutText: {
+    fontWeight: '700',
+    fontSize: wp(4.5),
+    color: '#FFFFFF',
   },
   emptyCartContainer: {
     flex: 1,
@@ -294,14 +376,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
   },
   emptyCartText: {
-    fontSize: wp(5),
-    fontWeight: 'bold',
+    fontSize: wp(6),
+    fontWeight: '700',
     color: '#223263',
     marginTop: hp(2),
   },
   emptyCartSubText: {
     fontSize: wp(4),
-    color: '#9098B1',
+    color: '#6B7280',
     textAlign: 'center',
     marginTop: hp(1),
     marginBottom: hp(3),
@@ -310,11 +392,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#40BFFF',
     paddingVertical: hp(1.5),
     paddingHorizontal: wp(6),
-    borderRadius: wp(2),
+    borderRadius: wp(3),
+    elevation: 2,
   },
   startShoppingButtonText: {
-    color: 'white',
-    fontSize: wp(4),
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: wp(4.5),
+    fontWeight: '600',
   },
 });

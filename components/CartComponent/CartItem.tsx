@@ -28,13 +28,7 @@ const CartItem = ({item}: {item: typeCart}) => {
   const [value, setValue] = useState(`${item.quantity}`);
   const [isChose, setIsChose] = useState(item.status);
   const dispatch = useAppDispatch();
-  const moneyMustBePaid = useSelector(
-    (state: RootState) => state.cart.moneyMustBePaid,
-  );
-  useEffect(() => {
-    console.log(moneyMustBePaid);
-  }, [moneyMustBePaid]);
-
+  
   const handleChoseItem = () => {
     if (isChose == 0) {
       setIsChose(1);

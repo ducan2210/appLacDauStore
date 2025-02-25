@@ -1,62 +1,84 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-// import statusCodes along with GoogleSignin
 import {
   GoogleSignin,
   isErrorWithCode,
-  isSuccessResponse,
   statusCodes,
-  GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import CustomGoogleSigninButton from './CustomGoogleSigninButton';
+import axios from 'axios'; // Thêm axios để gọi API
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Thêm AsyncStorage để lưu token
+import {loginWithGG} from '@/hooks/api/useAuth';
+import {useAppDispatch} from '@/redux/store';
+import {loadUser} from '@/redux/slices/userSlice';
+import {loadCalculateCartTotal, loadCart} from '@/redux/slices/cartSlice';
+import {loadWishList} from '@/redux/slices/wishListSlice';
+import {loadAddress} from '@/redux/slices/addressSlice';
+import {loadOrder} from '@/redux/slices/orderSlice';
+import {router} from 'expo-router';
+
 const BtnLoginGG = () => {
-  // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  // Khai báo đúng kiểu User hoặc null
+  const dispatch = useAppDispatch();
   GoogleSignin.configure({
     webClientId:
       '629627177990-9ne7td287mpqrvqn34kkss8p8ljfdhr2.apps.googleusercontent.com',
   });
-  // Somewhere in your code
+
   const signIn = async () => {
     try {
-      // Check if your device supports Google Play
+      // Kiểm tra Google Play Services
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      // Get the users ID token
+
+      // Đăng nhập bằng Google
       const response = await GoogleSignin.signIn();
-      console.log('response', response.data);
-      // Try the new style of google-sign in result, from v13+ of that module
       const idToken = response.data?.idToken;
+
       if (!idToken) {
         console.error('ID token is missing or invalid.');
         return;
       }
 
+      // Đăng nhập vào Firebase (tùy chọn, nếu bạn vẫn muốn dùng Firebase)
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
 
-      // Sign-in the user with the credential
-      return auth().signInWithCredential(googleCredential);
+      // Gửi idToken đến backend để lấy token của bạn
+      const backendResponse = await loginWithGG(idToken);
+      if (backendResponse && backendResponse.token) {
+        dispatch(loadUser(backendResponse.user.username)); // Gọi loadUser với username
+        dispatch(loadCart(backendResponse.user.user_id));
+        dispatch(loadCalculateCartTotal(backendResponse.user.user_id));
+        dispatch(loadWishList(backendResponse.user.user_id));
+        dispatch(loadAddress(backendResponse.user.user_id));
+        dispatch(loadOrder(backendResponse.user.user_id));
+        // Xử lý đăng nhập thành công
+        Alert.alert('Success', 'Logged in successfully!');
+        // Điều hướng đến màn hình chính sau khi đăng nhập
+        router.push('/(tabs)/home');
+      }
     } catch (error) {
+      console.error('Sign-in error:', error);
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
+            console.log('Sign in in progress');
             break;
           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
+            console.log('Play services not available');
             break;
           default:
-          // some other error happened
+            console.log('Other Google sign-in error:', error);
         }
       } else {
-        // an error that's not related to google sign in occurred
+        console.log('Non-Google error:', error);
       }
     }
   };
 
-  // Handle user state changes
+  // Xử lý thay đổi trạng thái user từ Firebase
   function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
     setUser(user);
     if (initializing) setInitializing(false);
@@ -64,26 +86,14 @@ const BtnLoginGG = () => {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return subscriber; // Hủy đăng ký khi component unmount
   }, []);
 
   if (initializing) return null;
 
-  if (!user) {
-    // return <GoogleSigninButton onPress={signIn}></GoogleSigninButton>;
-    return <CustomGoogleSigninButton onPress={signIn} />;
-  }
-  return (
-    <View>
-      <Text>
-        Welcome {user?.email}, {user?.displayName}
-      </Text>
-      <TouchableOpacity onPress={() => auth().signOut()}>
-        <Text>sign-out</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  return <CustomGoogleSigninButton onPress={signIn} />;
 };
+
 export default BtnLoginGG;
 
 const styles = StyleSheet.create({
@@ -92,9 +102,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-function setState(arg0: {
-  userInfo: import('@react-native-google-signin/google-signin').User;
-}) {
-  throw new Error('Function not implemented.');
-}

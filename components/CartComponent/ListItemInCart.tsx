@@ -1,6 +1,5 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {getCartById} from '@/hooks/api/useCart';
 
 import {typeCart} from '@/models/cart.model';
 import CartItem from './cartItem';

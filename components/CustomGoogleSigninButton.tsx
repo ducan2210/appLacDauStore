@@ -34,7 +34,7 @@ const CustomGoogleSigninButton: React.FC<CustomGoogleSigninButtonProps> = ({
           style={styles.logo}
         />
       </View>
-      <View style={{flex: 0.7, alignItems: 'center'}}>
+      <View style={{flex: 0.55, alignItems: 'center'}}>
         <Text style={styles.text}>Login with Google</Text>
       </View>
     </TouchableOpacity>

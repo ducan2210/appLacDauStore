@@ -1,7 +1,6 @@
+// @/hooks/api/axiosInstance.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Alert} from 'react-native'; // Hiển thị thông báo cho người dùng
-import {useRouter} from 'expo-router'; // import useRouter từ expo-router
 import {apiUrl} from './apiURL';
 
 export const axiosInstance = axios.create({
@@ -25,29 +24,15 @@ axiosInstance.interceptors.request.use(
 
 // Thêm interceptor để xử lý lỗi
 axiosInstance.interceptors.response.use(
-  response => response, // Trả về dữ liệu bình thường nếu không có lỗi
+  response => response,
   async error => {
-    // Kiểm tra nếu lỗi là 401 (Unauthorized)
     if (error.response?.status === 401) {
-      // Hiển thị cảnh báo cho người dùng
-      Alert.alert(
-        'Phiên đăng nhập hết hạn',
-        'Vui lòng đăng nhập lại để tiếp tục.',
-        [
-          {
-            text: 'OK',
-            onPress: async () => {
-              // Xóa token khỏi AsyncStorage
-              await AsyncStorage.removeItem('token');
-              // Sử dụng useRouter để điều hướng
-              const router = useRouter();
-              router.push('/entry/LoginUI'); // Điều hướng đến trang đăng nhập
-            },
-          },
-        ],
-      );
+      // Xóa token khi nhận lỗi 401
+      await AsyncStorage.removeItem('token');
+      // Ném lỗi để xử lý ở nơi gọi axiosInstance
+      return Promise.reject(new Error('Session expired'));
     }
-    return Promise.reject(error); // Tiếp tục xử lý lỗi cho các phần khác
+    return Promise.reject(error);
   },
 );
 

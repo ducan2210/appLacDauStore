@@ -6,6 +6,8 @@ import {
 } from 'react-native-responsive-screen';
 import {EvilIcons, Feather, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {Link} from 'expo-router';
+import BtnSignout from '@/components/BtnSignout';
+
 const index = () => {
   return (
     <View style={styles.container}>
@@ -55,6 +57,9 @@ const index = () => {
           />
           <Text style={styles.optionTitle}>Payment</Text>
         </TouchableOpacity> */}
+      </View>
+      <View>
+        <BtnSignout></BtnSignout>
       </View>
     </View>
   );

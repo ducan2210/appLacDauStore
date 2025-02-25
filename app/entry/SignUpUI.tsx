@@ -1,31 +1,70 @@
 import {
-  Button,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
   Image,
+  ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
-import EvilIcons from '@expo/vector-icons/EvilIcons';
+import React, {useEffect, useState} from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Feather from '@expo/vector-icons/Feather';
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Link} from 'expo-router';
+import BtnSignUp from '@/components/BtnSignUp';
+import {Feather} from '@expo/vector-icons';
+import {
+  validateEmail,
+  validatePassword,
+  validatePasswordMatch,
+} from '@/hooks/useValidate';
 const SignUpUP = () => {
   const [userName, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [passwordAgain, setPasswordAgain] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPasswordAgain, setShowPasswordAgain] = useState<boolean>(false);
+
+  const [errorsPassword, setErrorsPassword] = useState('');
+  useEffect(() => {
+    if (!validatePassword(password) && password.trim() !== '') {
+      setErrorsPassword(
+        'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.',
+      );
+    } else {
+      setErrorsPassword('');
+    }
+  }, [password]);
+
+  const [errorsPasswordAgain, setErrorsPasswordAgain] = useState('');
+  useEffect(() => {
+    if (
+      !validatePasswordMatch(password, passwordAgain) &&
+      passwordAgain.trim() !== ''
+    ) {
+      setErrorsPasswordAgain('Passwords do not match.');
+    } else {
+      setErrorsPasswordAgain('');
+    }
+  }, [passwordAgain]);
+
+  const [errorsEmail, setErrorsEmail] = useState('');
+  useEffect(() => {
+    if (!validateEmail(email) && email.trim() !== '') {
+      setErrorsEmail('Invalid email format.');
+    } else {
+      setErrorsEmail('');
+    }
+  }, [email]);
+
   return (
     <View style={{paddingTop: hp(7), flex: 1}}>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Image
             style={{height: hp(15), width: hp(15), borderRadius: wp(7)}}
@@ -64,35 +103,68 @@ const SignUpUP = () => {
               value={email}
             />
           </View>
+          {errorsEmail && (
+            <Text style={{color: 'red', marginBottom: hp(2)}}>
+              {errorsEmail}
+            </Text>
+          )}
+
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={wp(5)} color="#9098B1" />
             <TextInput
               style={styles.textInput}
               placeholder="Password"
-              secureTextEntry={true}
+              secureTextEntry={!showPassword}
               onChangeText={text => setPassword(text)}
               value={password}
               textContentType="none" // Tắt tính năng "Automatic Strong Passwords"
             />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Feather
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={wp(5)}
+                color="#9098B1"
+              />
+            </TouchableOpacity>
           </View>
+
+          {errorsPassword && (
+            <Text style={{color: 'red', marginBottom: hp(2)}}>
+              {errorsPassword}
+            </Text>
+          )}
+
           <View style={styles.inputContainer}>
             <AntDesign name="lock" size={wp(5)} color="#9098B1" />
             <TextInput
               style={styles.textInput}
               placeholder="Password Again"
-              secureTextEntry={true}
+              secureTextEntry={!showPasswordAgain}
               onChangeText={text => setPasswordAgain(text)}
               value={passwordAgain}
               textContentType="none" // Tắt tính năng "Automatic Strong Passwords"
             />
+            <TouchableOpacity
+              onPress={() => setShowPasswordAgain(!showPasswordAgain)}>
+              <Feather
+                name={showPasswordAgain ? 'eye-off' : 'eye'}
+                size={wp(5)}
+                color="#9098B1"
+              />
+            </TouchableOpacity>
           </View>
         </View>
+        {errorsPasswordAgain && (
+          <Text style={{color: 'red', marginBottom: hp(2)}}>
+            {errorsPasswordAgain}
+          </Text>
+        )}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.btnSignInNor}>
-            <Text style={{color: 'white', fontSize: wp(4), fontWeight: 'bold'}}>
-              Sign Up
-            </Text>
-          </TouchableOpacity>
+          <BtnSignUp
+            userName={userName}
+            email={email}
+            password={password}
+            passwordAgain={passwordAgain}></BtnSignUp>
           <View style={{flexDirection: 'row', marginVertical: hp(2)}}>
             <Text style={{fontSize: wp(4), color: '#9098B1'}}>
               Have a account?
@@ -114,7 +186,7 @@ const SignUpUP = () => {
           </View>
         </View>
         <View style={{height: hp(10)}}></View>
-      </View>
+      </ScrollView>
     </View>
   );
 };

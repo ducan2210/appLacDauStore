@@ -1,6 +1,26 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiUrl} from './apiURL';
+import axiosInstance from './axiosInstance';
+
+export const checkTokenValidity = async (): Promise<boolean> => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    console.log('Token being verified:', token); // Debug token
+    if (!token) return false;
+
+    const response = await axiosInstance.get('/VerifyToken');
+    console.log('Verify token response:', response.data); // Debug response
+    return response.data.valid;
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', error.response?.data); // Log chi tiết lỗi từ backend
+    }
+    return false;
+  }
+};
+
 export const login = async (
   username: string,
   password: string,
@@ -20,7 +40,26 @@ export const login = async (
     }
   } catch (error) {
     console.error('Login failed:', error);
-    throw error;
+    // throw error;
+  }
+};
+
+export const loginWithGG = async (idToken: string): Promise<any> => {
+  try {
+    console.log('idToken:', idToken);
+    const response = await axios.post(`${apiUrl}/LoginWithGoogle`, {
+      googleToken: idToken,
+    });
+    console.log('response:', response.data);
+    if (response) {
+      await AsyncStorage.setItem('token', response.data?.token); // Lưu token
+      return response.data;
+    } else {
+      throw new Error('Token not found in response');
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+    // throw error;
   }
 };
 

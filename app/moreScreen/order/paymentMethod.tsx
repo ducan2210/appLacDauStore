@@ -50,15 +50,20 @@ const PaymentMethod = () => {
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const cart = useSelector((state: RootState) => state.cart.cart);
   const onCreateOrder = () => {
-    createOrder(
-      cart,
-      dispatch,
-      user.user_id,
-      moneyMustBePaid,
-      orderInformation,
-      discountApplied,
-      1,
-    );
+    if (user) {
+      createOrder(
+        cart,
+        dispatch,
+        user.user_id,
+        moneyMustBePaid,
+        orderInformation,
+        discountApplied,
+        1,
+      );
+    } else {
+      // Xử lý trường hợp user là null
+      console.error('User is null');
+    }
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -165,13 +170,18 @@ const PaymentMethod = () => {
             />
           )}
         </TouchableOpacity>
-        {selectedPaymentMethod == 'Cash on Delivery' ? (
-          <BtnOrderConfirmation
-            user_id={user.user_id}
-            total_amount={moneyMustBePaid}
-            order_information={orderInformation}
-            discount_applied={discountApplied}
-            payment_method_id={2}></BtnOrderConfirmation>
+        {selectedPaymentMethod === 'Cash on Delivery' ? (
+          user ? (
+            <BtnOrderConfirmation
+              user_id={user.user_id}
+              total_amount={moneyMustBePaid}
+              order_information={orderInformation}
+              discount_applied={discountApplied}
+              payment_method_id={2}
+            />
+          ) : (
+            <Text style={{color: 'red'}}>User is not logged in</Text>
+          )
         ) : (
           <TouchableOpacity
             onPress={() => onCheckout(moneyMustBePaid)}
