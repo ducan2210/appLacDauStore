@@ -6,14 +6,10 @@ import axiosInstance from './axiosInstance';
 export const checkTokenValidity = async (): Promise<boolean> => {
   try {
     const token = await AsyncStorage.getItem('token');
-    console.log('Token being verified:', token); // Debug token
     if (!token) return false;
-
     const response = await axiosInstance.get('/VerifyToken');
-    console.log('Verify token response:', response.data); // Debug response
     return response.data.valid;
   } catch (error) {
-    console.error('Error verifying token:', error);
     if (axios.isAxiosError(error)) {
       console.error('Axios error details:', error.response?.data); // Log chi tiết lỗi từ backend
     }
@@ -46,11 +42,10 @@ export const login = async (
 
 export const loginWithGG = async (idToken: string): Promise<any> => {
   try {
-    console.log('idToken:', idToken);
     const response = await axios.post(`${apiUrl}/LoginWithGoogle`, {
       googleToken: idToken,
     });
-    console.log('response:', response.data);
+
     if (response) {
       await AsyncStorage.setItem('token', response.data?.token); // Lưu token
       return response.data;
@@ -78,7 +73,6 @@ export const createUser = async (
     await AsyncStorage.setItem('token', token);
     return response.data;
   } catch (error) {
-    console.error('Register failed:', error);
     throw new Error('Register failed');
   }
 };

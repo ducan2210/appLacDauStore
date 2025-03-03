@@ -23,6 +23,7 @@ import ListItemInCart from '@/components/cartComponent/listItemInCart';
 import {useAppDispatch} from '@/redux/store';
 import {setDiscountApplied, setMoneyMustBePaid} from '@/redux/slices/cartSlice';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {getAllCouriers, typeCouriers} from '@/hooks/api/useAfterShip';
 
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart.cart);
@@ -34,21 +35,21 @@ const Cart = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedCourier, setSelectedCourier] = useState('usps');
-  const [couriers, setCouriers] = useState([
-    {label: 'USPS', value: 'usps'},
-    {label: 'FedEx', value: 'fedex'},
-    {label: 'DHL', value: 'dhl'},
-    {label: 'GHN (Giao Hàng Nhanh)', value: 'ghn'},
-    {label: 'Viettel Post', value: 'viettel-post'},
-    {label: 'UPS', value: 'ups'},
-    {label: 'Tiki', value: 'tiki'},
-    {label: 'Shopee Express', value: 'shopee-express'},
-    {label: 'Ninja Van', value: 'ninja-van'},
-    {label: 'J&T Express', value: 'jt-express'},
-    {label: 'AhaMove', value: 'ahamove'},
-    {label: 'GrabExpress', value: 'grab-express'},
-    {label: 'Lalamove', value: 'lalamove'},
-  ]);
+  const [couriers, setCouriers] = useState<{label: string; value: string}[]>(
+    [],
+  );
+  useEffect(() => {
+    const loadCouriers = async () => {
+      const response = await getAllCouriers();
+      const items = response.map(courier => ({
+        label: courier.name,
+        value: courier.slug,
+      }));
+      setCouriers(items);
+    };
+    loadCouriers();
+  }, []);
+
 
   const handleApplyCoupon = () => {
     if (textInputRef.current) {

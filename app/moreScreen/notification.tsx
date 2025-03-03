@@ -1,32 +1,30 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import BtnBackScreen from '@/components/BtnBackScreen';
+import ListNotification from '@/components/notificationComponent/listNotification';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/redux/rootReducer';
+import {Link} from 'expo-router';
+import {
+  AntDesign,
+  Feather,
+  FontAwesome,
+  Ionicons,
+  MaterialIcons,
+} from '@expo/vector-icons';
 const Notification = () => {
-  const Offer = () => {
-    return (
-      <View>
-        <Text>abc</Text>
-      </View>
-    );
-  };
-  const Feed = () => {
-    return (
-      <View>
-        <Text>abc</Text>
-      </View>
-    );
-  };
-  const Acivity = () => {
-    return (
-      <View>
-        <Text>abc</Text>
-      </View>
-    );
-  };
+  const user = useSelector((state: RootState) => state.user.user);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -34,7 +32,11 @@ const Notification = () => {
         <Text style={styles.title}>Notification</Text>
       </View>
       <ScrollView>
-        
+        {user?.user_id ? (
+          <ListNotification user_id={user.user_id} />
+        ) : (
+          <Text style={{color: 'red'}}>User is not logged in</Text>
+        )}
       </ScrollView>
     </View>
   );
@@ -62,4 +64,15 @@ const styles = StyleSheet.create({
     marginLeft: wp(3),
   },
   body: {},
+
+  option: {
+    marginBottom: hp(2),
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: wp(100),
+  },
+  optionTitle: {
+    fontSize: wp(4),
+    fontWeight: 'bold',
+  },
 });

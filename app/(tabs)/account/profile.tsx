@@ -24,7 +24,7 @@ import {
 import {RootState} from '@/redux/rootReducer';
 import {useSelector} from 'react-redux';
 const Profile = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user?.user);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -48,10 +48,10 @@ const Profile = () => {
                 justifyContent: 'space-evenly',
               }}>
               <Text style={{fontSize: wp(5), fontWeight: 'bold'}}>
-                {user.username}
+                {user?.username}
               </Text>
               <Text style={{fontSize: wp(5), color: '#9098B1'}}>
-                {user.email}
+                {user?.email}
               </Text>
             </TouchableOpacity>
           </Link>
@@ -136,7 +136,7 @@ const Profile = () => {
                     color: '#9098B1',
                     marginRight: wp(4),
                   }}>
-                  {user.email}
+                  {user?.email}
                 </Text>
                 <AntDesign name="right" size={wp(6)} color="#9098B1" />
               </TouchableOpacity>
@@ -164,7 +164,7 @@ const Profile = () => {
                     color: '#9098B1',
                     marginRight: wp(4),
                   }}>
-                  {user.phone ? user.phone : 'Chưa xác thực'}
+                  {user?.phone ? user?.phone : 'Chưa xác thực'}
                 </Text>
                 <AntDesign name="right" size={wp(6)} color="#9098B1" />
               </TouchableOpacity>

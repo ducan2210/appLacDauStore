@@ -13,7 +13,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {AntDesign} from '@expo/vector-icons';
+import {AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 
 import Slider from '@/components/slider/Slider';
 import ListProduct from '@/components/productComponent/listProduct';
@@ -80,11 +80,15 @@ const Home = () => {
             <BtnGoToWishList></BtnGoToWishList>
             <Link href={'/moreScreen/notification'} asChild>
               <TouchableOpacity>
-                <AntDesign
-                  style={{}}
-                  name="bells"
+                <MaterialCommunityIcons
+                  name="bell-outline"
                   size={wp(7)}
                   color="#9098B1"
+                />
+                <MaterialCommunityIcons
+                  name="bell-badge-outline"
+                  size={wp(7)}
+                  color="red"
                 />
               </TouchableOpacity>
             </Link>

@@ -15,6 +15,12 @@ const _layout = () => {
       <Stack.Screen name="category" options={{headerShown: false}} />
       <Stack.Screen name="sort" options={{headerShown: false}} />
       <Stack.Screen name="order" options={{headerShown: false}} />
+      <Stack.Screen
+        name="activityNotification"
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="feedNotification" options={{headerShown: false}} />
+      <Stack.Screen name="offerNotification" options={{headerShown: false}} />
     </Stack>
   );
 };
