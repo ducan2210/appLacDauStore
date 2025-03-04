@@ -3,7 +3,10 @@ import React from 'react';
 import {RootState, useAppDispatch} from '@/redux/store';
 import {addToWishList, deleteItemInWishList} from '@/hooks/api/useWishList';
 import {AntDesign} from '@expo/vector-icons';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
 const BtnAddToWishList = ({
   user_id,
@@ -17,7 +20,7 @@ const BtnAddToWishList = ({
   const isProductInWishList = wishList.some(
     item => item.product_id === product_id,
   );
-  const handleAddToCart = () => {
+  const handleAddToWishList = () => {
     Alert.alert(
       'Confirmation',
       'Are you sure you want to add this to your wish list?',
@@ -58,11 +61,15 @@ const BtnAddToWishList = ({
   return (
     <View>
       {!isProductInWishList ? (
-        <TouchableOpacity onPress={handleAddToCart}>
+        <TouchableOpacity
+          style={{marginRight: heightPercentageToDP(1)}}
+          onPress={handleAddToWishList}>
           <AntDesign name="hearto" size={wp(5)} color="#9098B1" />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={handleRemoveFromWishList}>
+        <TouchableOpacity
+          style={{marginRight: heightPercentageToDP(1)}}
+          onPress={handleRemoveFromWishList}>
           <AntDesign name="heart" size={wp(5)} color="red" />
         </TouchableOpacity>
       )}

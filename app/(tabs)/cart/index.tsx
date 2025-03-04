@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -21,7 +22,11 @@ import {getPromotionByCode} from '@/hooks/api/usePromotion';
 import {typePromotion} from '@/models/promotion.model';
 import ListItemInCart from '@/components/cartComponent/listItemInCart';
 import {useAppDispatch} from '@/redux/store';
-import {setDiscountApplied, setMoneyMustBePaid} from '@/redux/slices/cartSlice';
+import {
+  loadCart,
+  setDiscountApplied,
+  setMoneyMustBePaid,
+} from '@/redux/slices/cartSlice';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {getAllCouriers, typeCouriers} from '@/hooks/api/useAfterShip';
 
@@ -32,7 +37,7 @@ const Cart = () => {
   const [promotion, setPromotion] = useState<typePromotion>();
   const textInputRef = useRef<TextInput>(null);
   const dispatch = useAppDispatch();
-
+  const user = useSelector((state: RootState) => state.user.user);
   const [open, setOpen] = useState(false);
   const [selectedCourier, setSelectedCourier] = useState('usps');
   const [couriers, setCouriers] = useState<{label: string; value: string}[]>(
@@ -50,6 +55,15 @@ const Cart = () => {
     loadCouriers();
   }, []);
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    if (user?.user_id !== undefined) {
+      dispatch(loadCart(user.user_id));
+    }
+    setRefreshing(false);
+  };
 
   const handleApplyCoupon = () => {
     if (textInputRef.current) {
@@ -196,6 +210,14 @@ const Cart = () => {
       ) : (
         <FlatList
           data={[{}]}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#40BFFF']} // Màu của vòng loading khi kéo
+              tintColor="#40BFFF" // Màu trên iOS
+            />
+          }
           renderItem={() => renderContent()}
           showsVerticalScrollIndicator={false}
           keyExtractor={() => 'cart-content'}
@@ -240,7 +262,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: hp(3),
-    paddingHorizontal: wp(2),
     backgroundColor: '#FFFFFF',
     borderRadius: wp(3),
     elevation: 2,

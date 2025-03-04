@@ -17,6 +17,7 @@ import {loadWishList} from '@/redux/slices/wishListSlice';
 import {loadAddress} from '@/redux/slices/addressSlice';
 import {loadOrder} from '@/redux/slices/orderSlice';
 import {router} from 'expo-router';
+import {loadNotification} from '@/redux/slices/notificationSlice';
 
 const BtnLoginGG = () => {
   const [initializing, setInitializing] = useState(true);
@@ -54,6 +55,7 @@ const BtnLoginGG = () => {
         dispatch(loadWishList(backendResponse.user.user_id));
         dispatch(loadAddress(backendResponse.user.user_id));
         dispatch(loadOrder(backendResponse.user.user_id));
+        dispatch(loadNotification(backendResponse.user.user_id));
         // Xử lý đăng nhập thành công
         Alert.alert('Success', 'Logged in successfully!');
         // Điều hướng đến màn hình chính sau khi đăng nhập

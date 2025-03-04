@@ -1,5 +1,6 @@
 import {
   FlatList,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,7 +10,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import SearchBar from '@/components/SearchBar';
 import {Link} from 'expo-router';
-import {AntDesign} from '@expo/vector-icons';
+import {AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,19 +21,34 @@ import {getCategoryTree} from '@/hooks/api/useCategory';
 import {typeProduct} from '@/models/product.model';
 import ListProduct from '@/components/productComponent/listProduct';
 import ProductsRecommend from '@/components/productsRecommend';
+import BtnGoToWishList from '@/components/BtnGoToWishList';
+import {RootState} from '@/redux/rootReducer';
+import {useSelector} from 'react-redux';
 const Explore = () => {
   const [category, setCategory] = useState<typeCategory[]>([]);
+  const quantumNotification = useSelector(
+    (state: RootState) => state.notification.notifications,
+  );
+  const [refreshing, setRefreshing] = useState(false);
+  const fetchData = async () => {
+    const data = await getCategoryTree();
+    if (data) {
+      setCategory(data);
+    } else {
+      console.log('No data found');
+    }
+  };
+
   useEffect(() => {
-    const fetchCategory = async () => {
-      const data = await getCategoryTree();
-      if (data) {
-        setCategory(data);
-      } else {
-        console.log('No data found');
-      }
-    };
-    fetchCategory();
+    fetchData();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
+
   const [productsRecommend, setProductsRecommend] = useState<typeProduct[]>([]);
 
   const handleTextSearchChange = (newProducts: typeProduct[]) => {
@@ -42,27 +58,38 @@ const Explore = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <SearchBar onTextSearchChange={handleTextSearchChange}></SearchBar>
-        <TouchableOpacity>
-          <Link href={'/moreScreen/favoriteProduct'} asChild>
-            <TouchableOpacity>
-              <AntDesign
-                style={{}}
-                name="hearto"
+        <SearchBar onTextSearchChange={handleTextSearchChange} />
+        <BtnGoToWishList />
+        <Link href={'/moreScreen/notification'} asChild>
+          <TouchableOpacity style={styles.notificationIcon}>
+            {quantumNotification.some(item => item.status === 'unread') ? (
+              <MaterialCommunityIcons
+                name="bell-badge-outline"
+                size={wp(7)}
+                color="#FF5733"
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="bell-outline"
                 size={wp(7)}
                 color="#9098B1"
               />
-            </TouchableOpacity>
-          </Link>
-        </TouchableOpacity>
-        <Link href={'/moreScreen/notification'} asChild>
-          <TouchableOpacity>
-            <AntDesign style={{}} name="bells" size={wp(7)} color="#9098B1" />
+            )}
           </TouchableOpacity>
         </Link>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#40BFFF']} // Màu của vòng loading khi kéo
+            tintColor="#40BFFF" // Màu trên iOS
+          />
+        }
+        showsVerticalScrollIndicator={false}
+        style={styles.body}>
         {productsRecommend.length > 0 ? (
           <ProductsRecommend data={productsRecommend}></ProductsRecommend>
         ) : (
@@ -79,19 +106,32 @@ export default Explore;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: hp(6),
-    paddingHorizontal: wp(3),
+    paddingTop: hp(7),
+    paddingHorizontal: wp(4),
+    backgroundColor: '#F5F6FA',
+  },
+  notificationIcon: {
+    padding: wp(1),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: hp(8),
+    paddingVertical: hp(1),
     borderBottomWidth: wp(0.1),
-    borderColor: '#9098B1',
-    marginBottom: hp(2),
+    borderColor: '#E5E5E5',
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(2),
+    paddingHorizontal: wp(2),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 2,
   },
-  body: {},
+  body: {
+    paddingTop: hp(2),
+  },
   title: {
     fontSize: wp(5),
     fontWeight: 'bold',

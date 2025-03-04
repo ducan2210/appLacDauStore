@@ -1,5 +1,10 @@
 import React from 'react';
-import {ActivityIndicator, Modal, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 type LoadingProps = {
   visible: boolean;
@@ -7,26 +12,25 @@ type LoadingProps = {
 };
 
 const Loading = ({visible, text}: LoadingProps) => {
-  if (!visible) return null;
   return (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#40BFFF" />
-      <Text style={styles.loadingText}>{text}</Text>
-    </View>
+    <Spinner
+      visible={visible}
+      textContent={text || 'Loading...'}
+      textStyle={styles.loadingText}
+      overlayColor="rgba(0, 0, 0, 0.6)"
+      animation="fade"
+      color="#FFFFFF"
+      size="large"
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
   loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#fff',
+    fontSize: wp(4.5),
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginTop: hp(1),
   },
 });
 

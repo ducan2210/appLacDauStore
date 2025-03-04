@@ -1,6 +1,5 @@
-import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-
+import {StyleSheet, View, FlatList, TouchableOpacity} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
 import {SliderData} from '@/data/SliderData';
 import SliderItem from './SliderItem';
 import {
@@ -9,38 +8,57 @@ import {
 } from 'react-native-responsive-screen';
 
 const Slider = () => {
-  const [activeIndex, setActiveIndex] = useState(0); // Trạng thái lưu chỉ số của mục hiện tại
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
 
-  // Hàm để xử lý sự kiện cuộn của FlatList
   const onViewableItemsChanged = ({viewableItems}: any) => {
     if (viewableItems.length > 0) {
-      setActiveIndex(viewableItems[0].index); // Cập nhật chỉ số khi người dùng cuộn
+      setActiveIndex(viewableItems[0].index);
     }
   };
+
+  const scrollToIndex = (index: number) => {
+    flatListRef.current?.scrollToIndex({index, animated: true});
+    setActiveIndex(index);
+  };
+
+  // Tự động lướt slider
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % SliderData.length; // Chuyển sang mục tiếp theo, quay lại đầu nếu hết
+      scrollToIndex(nextIndex);
+    }, 3000); // Chuyển đổi sau mỗi 3 giây
+
+    // Dọn dẹp interval khi component unmount hoặc activeIndex thay đổi
+    return () => clearInterval(interval);
+  }, [activeIndex]); // Theo dõi activeIndex để đảm bảo interval hoạt động đúng
+
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={SliderData}
-        renderItem={({item, index}) => (
-          <SliderItem item={item} index={index}></SliderItem>
-        )}
+        renderItem={({item, index}) => <SliderItem item={item} index={index} />}
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
-        nestedScrollEnabled={true} // Thêm dòng này
-        onViewableItemsChanged={onViewableItemsChanged} // Theo dõi các mục đang hiển thị
-        viewabilityConfig={{viewAreaCoveragePercentThreshold: 50}} // Chỉ báo nếu ít nhất 50% mục là có thể nhìn thấy
+        snapToAlignment="center"
+        snapToInterval={wp(96)}
+        decelerationRate="fast"
+        nestedScrollEnabled={true}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{viewAreaCoveragePercentThreshold: 50}}
+        contentContainerStyle={styles.flatListContent}
       />
-      {/* Các chấm tròn phân trang */}
       <View style={styles.paginationContainer}>
         {SliderData.map((_, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.paginationDot,
-              activeIndex === index && styles.activeDot, // Đổi màu chấm tròn khi mục đó được chọn
+              activeIndex === index && styles.activeDot,
             ]}
-            onPress={() => setActiveIndex(index)} // Nhấn vào chấm tròn để chuyển tới mục tương ứng
+            onPress={() => scrollToIndex(index)}
           />
         ))}
       </View>
@@ -51,25 +69,34 @@ const Slider = () => {
 export default Slider;
 
 const styles = StyleSheet.create({
+  container: {
+    height: hp(28),
+    backgroundColor: '#F5F6FA',
+    marginVertical: hp(1),
+  },
+  flatListContent: {
+    // paddingHorizontal: wp(2),
+  },
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 10,
+    bottom: hp(4),
     left: 0,
     right: 0,
   },
   paginationDot: {
     width: wp(1.5),
     height: wp(1.5),
-    borderRadius: 5,
-    backgroundColor: '#EBF0FF',
-    margin: 5,
+    borderRadius: wp(0.75),
+    backgroundColor: '#D3D8E8',
+    marginHorizontal: wp(1),
   },
   activeDot: {
-    backgroundColor: '#40BFFF', // Màu chấm tròn khi mục đó được chọn
-    width: wp(2),
-    height: wp(2),
+    width: wp(2.5),
+    height: wp(2.5),
+    borderRadius: wp(1.25),
+    backgroundColor: '#40BFFF',
   },
 });

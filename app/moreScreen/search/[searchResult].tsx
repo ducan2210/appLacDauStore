@@ -10,7 +10,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
 import {typeProduct} from '@/models/product.model';
 import {Link, useLocalSearchParams} from 'expo-router';
 import {AntDesign, Feather, FontAwesome6} from '@expo/vector-icons';
@@ -18,9 +17,9 @@ import {AntDesign, Feather, FontAwesome6} from '@expo/vector-icons';
 import BtnBackScreen from '@/components/BtnBackScreen';
 import {getProductByCategoryId, getSearchProduct} from '@/hooks/api/useProduct';
 import ListProduct from '@/components/productComponent/listProduct';
-
 import BtnFilter from '@/components/BtnFilter';
 import Loading from '@/components/Loading';
+
 const Search = () => {
   const {searchResult, category, categoryName, sortedProducts} =
     useLocalSearchParams();
@@ -67,38 +66,39 @@ const Search = () => {
     };
     fetchProducts();
   }, [searchValue, categoryValue, sortedProducts]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{flex: 0.9, flexDirection: 'row'}}>
+        <View style={styles.headerLeft}>
           <Link href={'/(tabs)/explore'} asChild>
             <TouchableOpacity>
-              <AntDesign name="left" size={wp(6)} color="#9098B1" />
+              <AntDesign name="left" size={wp(6)} color="#666666" />
             </TouchableOpacity>
           </Link>
           <Text style={styles.title}>
-            {searchValue ? searchValue : categoryValue}
+            {searchValue || (categoryValue && categoryTitle) || 'Search'}
           </Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.headerRight}>
           <Link
             href={{
               pathname: '/moreScreen/sort/[sort]',
               params: {
                 sort: encodeURIComponent(JSON.stringify(products)),
-                title: searchValue ? searchValue : categoryValue,
+                title: searchValue || (categoryValue && categoryTitle) || '',
               },
             }}
             asChild>
-            <TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
               <FontAwesome6
                 name="arrow-down-wide-short"
                 size={wp(6)}
-                color="#9098B1"
+                color="#666666"
               />
             </TouchableOpacity>
           </Link>
-          <BtnFilter></BtnFilter>
+          <BtnFilter />
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
@@ -107,38 +107,13 @@ const Search = () => {
         ) : (
           <>
             {quantity > 0 && (
-              <View
-                style={{
-                  marginBottom: hp(2),
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: wp(4),
-                    fontWeight: 'bold',
-                    color: '#9098B1',
-                  }}>
-                  {quantity.toString()} Result
-                </Text>
+              <View style={styles.resultHeader}>
+                <Text style={styles.resultCount}>{quantity} Results</Text>
                 {categoryTitle && (
                   <Link href="/moreScreen/category" asChild>
-                    <TouchableOpacity
-                      style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Text
-                        style={{
-                          fontSize: wp(4),
-                          fontWeight: 'bold',
-                        }}>
-                        {categoryTitle}
-                      </Text>
-                      <AntDesign
-                        style={{marginLeft: wp(2)}}
-                        name="down"
-                        size={wp(4)}
-                        color="black"
-                      />
+                    <TouchableOpacity style={styles.categoryLink}>
+                      <Text style={styles.categoryText}>{categoryTitle}</Text>
+                      <AntDesign name="down" size={wp(4)} color="#223263" />
                     </TouchableOpacity>
                   </Link>
                 )}
@@ -146,50 +121,16 @@ const Search = () => {
             )}
 
             {products.length > 0 ? (
-              <View>
-                <ListProduct
-                  data={products}
-                  horizontal={false}
-                  numColumns={2}></ListProduct>
-              </View>
+              <ListProduct data={products} horizontal={false} numColumns={2} />
             ) : (
-              <View style={{alignItems: 'center'}}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: wp(100),
-                    height: hp(7),
-                    width: hp(7),
-                    backgroundColor: '#40BFFF',
-                    marginTop: hp(20),
-                    marginBottom: hp(2),
-                  }}>
+              <View style={styles.noResults}>
+                <View style={styles.noResultsIcon}>
                   <Feather name="x" size={wp(8)} color="white" />
                 </View>
-                <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
-                  Product Not Found
-                </Text>
+                <Text style={styles.noResultsText}>Product Not Found</Text>
                 <Link href={'/(tabs)/home'} asChild>
-                  <TouchableOpacity
-                    style={{
-                      marginTop: hp(2),
-                      backgroundColor: '#40BFFF',
-                      height: hp(8),
-                      width: wp(94),
-                      marginBottom: hp(7),
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderRadius: wp(2),
-                    }}>
-                    <Text
-                      style={{
-                        fontWeight: 'bold',
-                        fontSize: wp(4),
-                        color: 'white',
-                      }}>
-                      Back to Home
-                    </Text>
+                  <TouchableOpacity style={styles.backButton}>
+                    <Text style={styles.backButtonText}>Back to Home</Text>
                   </TouchableOpacity>
                 </Link>
               </View>
@@ -206,22 +147,108 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: hp(6),
-    paddingHorizontal: wp(3),
+    paddingTop: hp(5),
+    paddingHorizontal: wp(4),
+    backgroundColor: '#F5F6FA',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: hp(8),
+    paddingVertical: hp(1.5),
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: wp(0.1),
-    borderColor: '#9098B1',
+    borderBottomColor: '#E5E5E5',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 2,
+    marginBottom: hp(1),
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 0.9,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: wp(5.5),
+    fontWeight: '600',
+    color: '#223263',
+    marginLeft: wp(3),
+  },
+  iconButton: {
+    padding: wp(2),
+  },
+  body: {
+    flex: 1,
+  },
+  resultHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(2),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(2),
+    marginBottom: hp(2),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.1)},
+    shadowOpacity: 0.05,
+    shadowRadius: wp(0.5),
+    elevation: 1,
+  },
+  resultCount: {
+    fontSize: wp(4.5),
+    fontWeight: '600',
+    color: '#666666',
+  },
+  categoryLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  categoryText: {
+    fontSize: wp(4),
+    fontWeight: '600',
+    color: '#223263',
+  },
+  noResults: {
+    alignItems: 'center',
+    marginTop: hp(15),
+  },
+  noResultsIcon: {
+    width: wp(15),
+    height: wp(15),
+    borderRadius: wp(7.5),
+    backgroundColor: '#40BFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: hp(2),
   },
-  body: {},
-  title: {
-    fontSize: wp(5),
-    fontWeight: 'bold',
-    marginLeft: wp(3),
+  noResultsText: {
+    fontSize: wp(6),
+    fontWeight: '700',
+    color: '#223263',
+    marginBottom: hp(3),
+  },
+  backButton: {
+    backgroundColor: '#40BFFF',
+    paddingVertical: hp(1.5),
+    paddingHorizontal: wp(5),
+    borderRadius: wp(2),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 2,
+  },
+  backButtonText: {
+    fontSize: wp(4.5),
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

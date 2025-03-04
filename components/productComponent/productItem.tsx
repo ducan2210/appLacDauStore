@@ -18,6 +18,7 @@ type Props = {
 
 const ProductItem = ({item, index, styleType}: Props) => {
   const [promotion, setPromotion] = useState<typePromotion>();
+
   useEffect(() => {
     const findPromotion = async () => {
       const promotion = await getPromotionByProductID(item.product_id);
@@ -25,7 +26,6 @@ const ProductItem = ({item, index, styleType}: Props) => {
         setPromotion(promotion);
       }
     };
-
     findPromotion();
   }, [item]);
 
@@ -48,53 +48,25 @@ const ProductItem = ({item, index, styleType}: Props) => {
           style={
             styleType ? styles.imageItemHorizontal : styles.imageItemVertical
           }
-          source={{uri: item.image_url}}></Image>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            marginTop: hp(1),
-          }}>
-          <Text
-            style={{
-              fontSize: wp(4),
-              fontWeight: 'bold',
-              width: styleType ? wp(38) : wp(38), // Đặt width tối đa cho Text, có thể thay bằng chiều rộng cố định nếu cần
-              overflow: 'hidden', // Ẩn phần văn bản vượt ra ngoài
-            }}
-            numberOfLines={2} // Giới hạn văn bản chỉ hiển thị 1 dòng
-            ellipsizeMode="tail" // Hiển thị dấu "..." ở cuối nếu văn bản dài
-          >
+          source={{uri: item.image_url}}
+        />
+        <View style={styles.content}>
+          <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
             {item.name}
           </Text>
-          <StarRating rating={4}></StarRating>
+          <StarRating rating={4} />
           {item.discount_price ? (
-            <View style={{marginVertical: hp(0)}}>
-              <Text style={styles.discount_price}>${item.discount_price}</Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.price}>${item.price}</Text>
-                <Text
-                  style={{
-                    fontSize: wp(2.5),
-                    fontWeight: 'bold',
-                    color: 'red',
-                    marginLeft: wp(2),
-                  }}>
+            <View style={styles.priceContainer}>
+              <Text style={styles.discountPrice}>${item.discount_price}</Text>
+              <View style={styles.originalPriceContainer}>
+                <Text style={styles.originalPrice}>${item.price}</Text>
+                <Text style={styles.discountPercent}>
                   {Math.floor(promotion?.discount_percent as number)}% Off
                 </Text>
               </View>
             </View>
           ) : (
-            <Text
-              style={{
-                fontSize: wp(4),
-                color: '#40BFFF',
-                fontWeight: 'bold',
-                // marginTop: hp(1),
-              }}>
-              ${item.price}
-            </Text>
+            <Text style={styles.price}>${item.price}</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -106,51 +78,85 @@ export default ProductItem;
 
 const styles = StyleSheet.create({
   itemContainerHorizontal: {
-    paddingHorizontal: wp(3),
-    paddingVertical: wp(3),
-    borderColor: '#9098B1',
-    borderWidth: wp(0.1),
-    borderRadius: wp(2),
-    marginRight: wp(5),
-    marginTop: hp(2),
-    height: hp(33),
+    padding: wp(3),
+    borderRadius: wp(3),
+    backgroundColor: '#FFFFFF',
+    borderWidth: wp(0.2),
+    borderColor: '#E5E5E5',
+    marginRight: wp(4),
+    marginVertical: hp(1),
+    width: wp(43.5),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 3,
   },
   itemContainerVertical: {
-    paddingHorizontal: wp(3),
-    paddingVertical: wp(3),
-    borderColor: '#9098B1',
-    borderWidth: wp(0.1),
-    borderRadius: wp(2),
-    marginRight: wp(5),
-    marginBottom: hp(2),
-    height: hp(33),
+    padding: wp(3),
+    borderRadius: wp(3),
+    backgroundColor: '#FFFFFF',
+    borderWidth: wp(0.2),
+    borderColor: '#E5E5E5',
+    marginRight: wp(4),
+    marginVertical: hp(1),
+    width: wp(43.5),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 3,
   },
   imageItemVertical: {
     height: hp(15),
-    width: wp(38),
-    borderColor: '#9098B1',
-    borderWidth: wp(0.1),
+    width: wp(35),
     borderRadius: wp(2),
-    padding: wp(2),
+    resizeMode: 'cover',
   },
   imageItemHorizontal: {
     height: hp(15),
-    width: wp(38),
-    borderColor: '#9098B1',
-    borderWidth: wp(0.1),
+    width: wp(35),
     borderRadius: wp(2),
-    padding: wp(2),
+    resizeMode: 'cover',
   },
-  discount_price: {
+  content: {
+    flex: 1,
+    marginTop: hp(1),
+  },
+  name: {
     fontSize: wp(4),
-    color: '#40BFFF',
-    fontWeight: 'bold',
-    marginVertical: hp(1),
+    fontWeight: '600',
+    color: '#223263',
+    marginBottom: hp(0.8),
+  },
+  priceContainer: {
+    marginTop: hp(0.5),
+  },
+  discountPrice: {
+    fontSize: wp(4.5),
+    color: '#FF5733',
+    fontWeight: '700',
+  },
+  originalPriceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: hp(0.2),
+  },
+  originalPrice: {
+    fontSize: wp(3.5),
+    color: '#9098B1',
+    textDecorationLine: 'line-through',
+    marginRight: wp(2),
+  },
+  discountPercent: {
+    fontSize: wp(3.2),
+    fontWeight: '700',
+    color: '#FF5733',
   },
   price: {
-    fontSize: wp(4),
-    color: '#9098B1',
-    fontWeight: 'bold',
-    textDecorationLine: 'line-through',
+    fontSize: wp(4.5),
+    color: '#40BFFF',
+    fontWeight: '700',
+    marginTop: hp(0.5),
   },
 });

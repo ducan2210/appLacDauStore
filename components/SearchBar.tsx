@@ -57,7 +57,7 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
         <AntDesign
           style={{marginRight: wp(2)}}
           name="search1"
-          size={wp(5)}
+          size={wp(3.5)}
           color="#40BFFF"
         />
         <TextInput
@@ -77,7 +77,7 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
         />
         {textSearch.length > 0 && (
           <TouchableOpacity onPress={touchX}>
-            <Feather name="x" size={wp(5)} color="#9098B1" />
+            <Feather name="x" size={wp(3.5)} color="#9098B1" />
           </TouchableOpacity>
         )}
       </View>

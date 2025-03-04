@@ -39,8 +39,6 @@ export const getAllCouriers = async (): Promise<typeCouriers[]> => {
     );
     return vietnamCouriers;
   } catch (error) {
-    console.error('Load failed:', error);
-    // Trả về danh sách mặc định nếu lỗi
     return [
       {slug: 'vietnam-post', name: 'Vietnam Post'},
       {slug: 'viettel-post', name: 'Viettel Post'},
