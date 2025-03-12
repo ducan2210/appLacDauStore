@@ -108,84 +108,93 @@ const Cart = () => {
   const renderContent = () => (
     <View style={styles.contentContainer}>
       <ListItemInCart cartData={cart}></ListItemInCart>
-      <View style={styles.couponContainer}>
-        <TextInput
-          value={coupon}
-          ref={textInputRef}
-          onChangeText={text => setCoupon(text)}
-          placeholder="Enter Coupon Code"
-          style={styles.couponInput}
-        />
-        <TouchableOpacity
-          onPress={handleApplyCoupon}
-          style={styles.applyButton}>
-          <Text style={styles.applyButtonText}>Apply</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.summaryContainer}>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Items ({cart.length})</Text>
-          <Text style={styles.summaryValue}>${totalPrice}</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Shipping</Text>
-          <Text style={styles.summaryValue}>$0</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Import Charges</Text>
-          <Text style={styles.summaryValue}>$0</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Courier</Text>
-          <DropDownPicker
-            open={open}
-            value={selectedCourier}
-            items={couriers}
-            setOpen={setOpen}
-            setValue={setSelectedCourier}
-            setItems={setCouriers}
-            placeholder="Select a courier"
-            containerStyle={styles.dropdownContainerStyle}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownList}
-            labelStyle={styles.dropdownLabel}
-            selectedItemLabelStyle={styles.selectedItemLabel}
-            listItemLabelStyle={styles.dropdownItemLabel}
-            listMode="SCROLLVIEW"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-            maxHeight={hp(20)} // Tăng maxHeight để hiển thị nhiều mục hơn
-            zIndex={1000}
-            dropDownDirection="BOTTOM" // Đảm bảo mở xuống dưới
-          />
-        </View>
-        {promotion && (
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Discount ({promotion.code})</Text>
-            <Text style={styles.discountValue}>
-              -${((totalPrice * promotion.discount_percent) / 100).toFixed(2)}
-            </Text>
+      {cart.some(item => item.status == 1) && (
+        <View>
+          <View style={styles.couponContainer}>
+            <TextInput
+              value={coupon}
+              ref={textInputRef}
+              onChangeText={text => setCoupon(text)}
+              placeholder="Enter Coupon Code"
+              style={styles.couponInput}
+            />
+            <TouchableOpacity
+              onPress={handleApplyCoupon}
+              style={styles.applyButton}>
+              <Text style={styles.applyButtonText}>Apply</Text>
+            </TouchableOpacity>
           </View>
-        )}
-        <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Total Price</Text>
-          <Text style={styles.totalValue}>
-            $
-            {promotion
-              ? (
-                  totalPrice -
-                  (totalPrice * promotion.discount_percent) / 100
-                ).toFixed(2)
-              : totalPrice.toFixed(2)}
-          </Text>
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Items ({cart.length})</Text>
+              <Text style={styles.summaryValue}>${totalPrice}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Shipping</Text>
+              <Text style={styles.summaryValue}>$0</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Import Charges</Text>
+              <Text style={styles.summaryValue}>$0</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Courier</Text>
+              <DropDownPicker
+                open={open}
+                value={selectedCourier}
+                items={couriers}
+                setOpen={setOpen}
+                setValue={setSelectedCourier}
+                setItems={setCouriers}
+                placeholder="Select a courier"
+                containerStyle={styles.dropdownContainerStyle}
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownList}
+                labelStyle={styles.dropdownLabel}
+                selectedItemLabelStyle={styles.selectedItemLabel}
+                listItemLabelStyle={styles.dropdownItemLabel}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                }}
+                maxHeight={hp(20)} // Tăng maxHeight để hiển thị nhiều mục hơn
+                zIndex={1000}
+                dropDownDirection="BOTTOM" // Đảm bảo mở xuống dưới
+              />
+            </View>
+            {promotion && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>
+                  Discount ({promotion.code})
+                </Text>
+                <Text style={styles.discountValue}>
+                  -$
+                  {((totalPrice * promotion.discount_percent) / 100).toFixed(2)}
+                </Text>
+              </View>
+            )}
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total Price</Text>
+              <Text style={styles.totalValue}>
+                $
+                {promotion
+                  ? (
+                      totalPrice -
+                      (totalPrice * promotion.discount_percent) / 100
+                    ).toFixed(2)
+                  : totalPrice.toFixed(2)}
+              </Text>
+            </View>
+            <Link href={'/moreScreen/order/shipTo'} asChild>
+              <TouchableOpacity
+                onPress={handleCheckOut}
+                style={styles.btnCheckOut}>
+                <Text style={styles.btnCheckOutText}>Check Out</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
         </View>
-        <Link href={'/moreScreen/order/shipTo'} asChild>
-          <TouchableOpacity onPress={handleCheckOut} style={styles.btnCheckOut}>
-            <Text style={styles.btnCheckOutText}>Check Out</Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
+      )}
     </View>
   );
 
@@ -225,6 +234,7 @@ const Cart = () => {
           contentContainerStyle={{paddingBottom: hp(4)}}
         />
       )}
+      <View style={{height: hp(5)}}></View>
     </View>
   );
 };

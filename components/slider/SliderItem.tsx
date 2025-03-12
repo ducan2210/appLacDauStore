@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   container: {
     width: wp(92),
     height: hp(25),
-    marginHorizontal: wp(2), // Thay padding bằng margin để không ảnh hưởng đến kích thước nội dung
+    marginHorizontal: wp(2),
     borderRadius: wp(3),
     overflow: 'hidden',
     // backgroundColor: '#FFFFFF', // Nền trắng để nổi bật

@@ -21,6 +21,10 @@ import {checkTokenValidity} from '@/hooks/api/useAuth';
 import axiosInstance from '@/hooks/api/axiosInstance';
 import {jwtDecode} from 'jwt-decode';
 import axios from 'axios'; // Thêm import axios
+import {
+  clearNotifications,
+  loadNotification,
+} from '@/redux/slices/notificationSlice';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,18 +34,14 @@ const Index = () => {
     const checkAuthAndNavigate = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        console.log('Token from AsyncStorage:', token);
         if (!token) {
           router.replace('/entry/LoginUI');
           return;
         }
 
         const isValid = await checkTokenValidity();
-        console.log('Token validity:', isValid);
         if (isValid) {
           const decoded: any = jwtDecode(token);
-          console.log('Decoded token:', decoded);
-
           const response = await axiosInstance.get(
             `/GetUser?username=${decoded.username}`,
           );
@@ -53,7 +53,7 @@ const Index = () => {
           dispatch(loadWishList(user.user_id));
           dispatch(loadAddress(user.user_id));
           dispatch(loadOrder(user.user_id));
-
+          dispatch(loadNotification(user.user_id));
           router.replace('/(tabs)/home');
         } else {
           dispatch(logoutUser());
@@ -61,6 +61,7 @@ const Index = () => {
           dispatch(clearWishList());
           dispatch(clearAddress());
           dispatch(clearOrder());
+          dispatch(clearNotifications());
           Alert.alert(
             'Session Expired',
             'Your session has expired. Please log in again.',
@@ -68,17 +69,12 @@ const Index = () => {
           router.replace('/entry/LoginUI');
         }
       } catch (error: unknown) {
-        // Khai báo error là unknown
-        console.error('Error during auth check:', error);
-        if (axios.isAxiosError(error)) {
-          // Kiểm tra kiểu an toàn
-          console.error('Axios error details:', error.response?.data);
-        }
         dispatch(logoutUser());
         dispatch(clearCart());
         dispatch(clearWishList());
         dispatch(clearAddress());
         dispatch(clearOrder());
+        dispatch(clearNotifications());
         if (error instanceof Error && error.message === 'Session expired') {
           Alert.alert(
             'Session Expired',

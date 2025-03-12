@@ -147,7 +147,7 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: hp(5),
+    paddingTop: hp(6),
     paddingHorizontal: wp(4),
     backgroundColor: '#F5F6FA',
   },
@@ -155,10 +155,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: hp(1.5),
-    backgroundColor: '#FFFFFF',
     borderBottomWidth: wp(0.1),
-    borderBottomColor: '#E5E5E5',
+    borderColor: '#9098B1',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: hp(0.2)},
     shadowOpacity: 0.1,

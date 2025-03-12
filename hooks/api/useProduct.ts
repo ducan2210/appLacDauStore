@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {apiUrl} from './apiURL';
-import {typeProduct} from '@/models/product.model';
+import {typeProduct, typeProductDetail} from '@/models/product.model';
 
 export const getAllProduct = async () => {
   try {
@@ -93,6 +93,35 @@ export const getProductShortByTimeNewlyListed = async () => {
     const response = await axios.get(
       `${apiUrl}/GetProductShortByTimeNewlyListed`,
     );
+    return response.data as typeProduct[];
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};
+
+export const getProductDetailById = async (query: number) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductDetailByID?product_id=${query}`,
+    );
+
+    return response.data as typeProductDetail;
+  } catch (error) {
+    throw new Error('Failed to find product: ' + error);
+  }
+};
+
+export const getProductRecommend = async (
+  product_id: number,
+  category_id: number,
+  name: string,
+  supplier_id: number,
+) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/GetProductRecommend?product_id=${product_id}&&name=${name}&&category_id=${category_id}&&supplier_id=${supplier_id}`,
+    );
+
     return response.data as typeProduct[];
   } catch (error) {
     throw new Error('Failed to find product: ' + error);

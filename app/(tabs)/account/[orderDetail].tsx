@@ -6,9 +6,10 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {useLocalSearchParams} from 'expo-router';
+import {Link, useLocalSearchParams, useRouter} from 'expo-router'; // Thêm useRouter
 import {getOrderById} from '@/hooks/api/useOrder';
 import BtnBackScreen from '@/components/BtnBackScreen';
 import {
@@ -20,8 +21,11 @@ import {FontAwesome} from '@expo/vector-icons';
 
 const OrderDetail = () => {
   const {orderDetail} = useLocalSearchParams();
+  const router = useRouter(); // Để điều hướng sang trang khác
   const [orderInformation, setOrder] = useState<typeOrderInformation>();
   const [loading, setLoading] = useState(true);
+  const [ratings, setRatings] = useState<{[key: number]: number}>({});
+  const [comments, setComments] = useState<{[key: number]: string}>({});
 
   useEffect(() => {
     const loadOrderDetail = async () => {
@@ -80,6 +84,43 @@ const OrderDetail = () => {
         {info}
       </Text>
     ));
+  };
+
+  const renderRatingStars = (itemId: number, currentRating: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <TouchableOpacity key={i} onPress={() => handleRatingChange(itemId, i)}>
+          <FontAwesome
+            name={i <= currentRating ? 'star' : 'star-o'}
+            size={wp(4)}
+            color={i <= currentRating ? '#FFD700' : '#808080'}
+            style={{marginRight: wp(1)}}
+          />
+        </TouchableOpacity>,
+      );
+    }
+    return stars;
+  };
+
+  const handleRatingChange = (itemId: number, rating: number) => {
+    setRatings(prev => ({...prev, [itemId]: rating}));
+  };
+
+  const handleCommentChange = (itemId: number, text: string) => {
+    setComments(prev => ({...prev, [itemId]: text}));
+  };
+
+  // Xử lý khi nhấn nút Submit
+  const handleSubmitReview = (itemId: number) => {
+    const rating = ratings[itemId] || 0;
+    const comment = comments[itemId] || '';
+    console.log(
+      `Review for item ${itemId}: Rating = ${rating}, Comment = ${comment}`,
+    );
+    // Gọi API để gửi đánh giá lên server tại đây nếu cần
+    // Ví dụ: await submitReview(itemId, rating, comment);
+    alert(`Submitted review for item ${itemId}: ${rating} stars, "${comment}"`);
   };
 
   if (loading) {
@@ -205,7 +246,6 @@ const OrderDetail = () => {
         <View
           style={{
             marginVertical: hp(1),
-
             padding: wp(4),
             borderColor: '#9098B1',
             borderWidth: wp(0.1),
@@ -223,10 +263,11 @@ const OrderDetail = () => {
         orderInformation.OrderItems.length > 0 ? (
           orderInformation.OrderItems.map(item => (
             <TouchableOpacity key={item.order_item_id}>
-              <View key={item.order_item_id} style={styles.orderItem}>
+              <View style={styles.orderItem}>
                 <Image
                   style={styles.imageProduct}
-                  source={{uri: item.Product.image_url}}></Image>
+                  source={{uri: item.Product.image_url}}
+                />
                 <View
                   style={{marginLeft: wp(2), justifyContent: 'space-between'}}>
                   <Text style={styles.productName}>{item.Product.name}</Text>
@@ -236,7 +277,6 @@ const OrderDetail = () => {
                       <Text style={styles.price}> ${item.Product.price}</Text>
                     )}
                   </View>
-
                   <Text style={{fontSize: wp(4)}}>
                     Quantity: {item.quantity}
                   </Text>
@@ -244,6 +284,24 @@ const OrderDetail = () => {
                     <Text style={{fontSize: wp(4)}}>
                       Discount: {Math.round(item.discount)}%
                     </Text>
+                  )}
+
+                  {orderInformation?.status === 'completed' && (
+                    <View style={styles.reviewContainer}>
+                      <Link
+                        href={{
+                          pathname:
+                            '/moreScreen/product/productReview/writeReview/[writeReview]',
+                          params: {writeReview: item.Product.product_id},
+                        }}
+                        asChild>
+                        <TouchableOpacity style={styles.submitButton}>
+                          <Text style={styles.submitButtonText}>
+                            Go to Review Page
+                          </Text>
+                        </TouchableOpacity>
+                      </Link>
+                    </View>
                   )}
                 </View>
               </View>
@@ -395,5 +453,50 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'flex-start',
+  },
+  reviewContainer: {
+    marginTop: hp(1),
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: hp(1),
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: wp(2),
+    fontSize: wp(4),
+    minHeight: hp(6),
+    width: wp(50),
+    backgroundColor: '#fff',
+    marginBottom: hp(1),
+  },
+  // Style cho nút Submit
+  submitButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(3),
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: wp(4),
+    fontWeight: 'bold',
+  },
+  // Style cho nút Navigate
+  navigateButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(3),
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  navigateButtonText: {
+    color: '#fff',
+    fontSize: wp(4),
+    fontWeight: 'bold',
   },
 });

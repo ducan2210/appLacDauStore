@@ -13,7 +13,6 @@ export const loadNotification = createAsyncThunk(
       const response = await axios.get(
         `${apiUrl}/GetNotificationByUserID?user_id=${userid}`,
       );
-      console.log('response', response.data);
       return response.data.notifications as typeNotification[];
     } catch (error) {
       console.error('Error fetching notifications data:', error);
@@ -33,6 +32,11 @@ export const notificationSlice = createSlice({
     setNotifications: (state, action) => {
       state.notifications = action.payload;
     },
+    clearNotifications: state => {
+      state.notifications = [];
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: builder => {
     builder
@@ -48,9 +52,8 @@ export const notificationSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
-    // Xử lý loadCalculateCartTotal
   },
 });
 
-export const {setNotifications} = notificationSlice.actions;
+export const {setNotifications, clearNotifications} = notificationSlice.actions;
 export default notificationSlice.reducer;

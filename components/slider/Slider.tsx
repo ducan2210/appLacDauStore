@@ -70,7 +70,7 @@ export default Slider;
 
 const styles = StyleSheet.create({
   container: {
-    height: hp(28),
+    height: hp(25),
     backgroundColor: '#F5F6FA',
     marginVertical: hp(1),
   },
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: hp(4),
+    bottom: hp(1),
     left: 0,
     right: 0,
   },

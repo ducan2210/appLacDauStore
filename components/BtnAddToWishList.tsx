@@ -17,9 +17,9 @@ const BtnAddToWishList = ({
 }) => {
   const dispatch = useAppDispatch();
   const wishList = useSelector((state: RootState) => state.wishList.wishList);
-  const isProductInWishList = wishList.some(
-    item => item.product_id === product_id,
-  );
+  const isProductInWishList =
+    Array.isArray(wishList) &&
+    wishList.some(item => item.product_id === product_id);
   const handleAddToWishList = () => {
     Alert.alert(
       'Confirmation',

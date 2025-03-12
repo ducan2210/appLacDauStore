@@ -1,11 +1,12 @@
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -22,18 +23,49 @@ import {
   Ionicons,
   MaterialIcons,
 } from '@expo/vector-icons';
+import {getNotificationByUserID} from '@/hooks/api/useNotification';
+import {typeNotification} from '@/models/notification.model';
 const Notification = () => {
   const user = useSelector((state: RootState) => state.user.user);
-
+  const [refreshing, setRefreshing] = useState(false);
+  const [notifications, setNotifications] = useState<typeNotification[]>([]);
+  const fetchData = async () => {
+    if (user?.user_id !== undefined) {
+      try {
+        const response = await getNotificationByUserID(user.user_id);
+        if (response) {
+          setNotifications(response);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
+  useEffect(() => {
+    fetchData();
+  }, [user]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <BtnBackScreen></BtnBackScreen>
         <Text style={styles.title}>Notification</Text>
       </View>
-      <ScrollView>
-        {user?.user_id ? (
-          <ListNotification user_id={user.user_id} />
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#40BFFF']} // Màu của vòng loading khi kéo
+            tintColor="#40BFFF" // Màu trên iOS
+          />
+        }>
+        {notifications ? (
+          <ListNotification notification={notifications} />
         ) : (
           <Text style={{color: 'red'}}>User is not logged in</Text>
         )}

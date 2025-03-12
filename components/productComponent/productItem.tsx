@@ -34,7 +34,7 @@ const ProductItem = ({item, index, styleType}: Props) => {
       href={{
         pathname: '/moreScreen/product/[productDetail]',
         params: {
-          productDetail: encodeURIComponent(JSON.stringify(item)),
+          productDetail: item.product_id,
         },
       }}
       asChild>
@@ -54,7 +54,7 @@ const ProductItem = ({item, index, styleType}: Props) => {
           <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
             {item.name}
           </Text>
-          <StarRating rating={4} />
+          {/* <StarRating rating={4} /> */}
           {item.discount_price ? (
             <View style={styles.priceContainer}>
               <Text style={styles.discountPrice}>${item.discount_price}</Text>

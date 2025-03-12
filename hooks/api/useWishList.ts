@@ -26,8 +26,6 @@ export const deleteItemInWishList = async (
   product_id: number,
 ) => {
   try {
-    console.log('user_id', user_id);
-    console.log('product_id', product_id);
     const response = await axiosInstance.delete(
       `${apiUrl}/DeleteItemInWishList?user_id=${user_id}&&product_id=${product_id}`,
     );

@@ -3,15 +3,14 @@ import axiosInstance from '@/hooks/api/axiosInstance';
 import {typeWishList} from '@/models/wishList';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
-// Tạo action loadWishList để lấy danh sách yêu thích
 export const loadWishList = createAsyncThunk(
-  'wishList/GetWishList', // Đổi tên để đồng bộ với naming ở userSlice, cartSlice
+  'wishList/GetWishList',
   async (user_id: number, {rejectWithValue}) => {
     try {
       const response = await axiosInstance.get(
         `${apiUrl}/GetWishListById?user_id=${user_id}`,
       );
-      return response.data; // Trả về danh sách wishlist (typeWishList[])
+      return response.data;
     } catch (error) {
       console.error('Error fetching wish list:', error);
       throw error;

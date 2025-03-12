@@ -48,16 +48,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: hp(6),
-    paddingHorizontal: wp(3),
+    paddingHorizontal: wp(4),
+    backgroundColor: '#F5F6FA',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: hp(8),
+    paddingBottom: hp(1),
     borderBottomWidth: wp(0.1),
     borderColor: '#9098B1',
-    marginBottom: hp(2),
+    marginBottom: hp(1),
   },
   title: {
     fontSize: wp(5),

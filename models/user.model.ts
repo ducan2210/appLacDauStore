@@ -9,4 +9,5 @@ export type typeUser = {
   status: 'active' | 'inactive' | 'banned';
   created_at: Date;
   updated_at: Date;
+  avatar: string;
 };

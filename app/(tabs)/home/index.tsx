@@ -37,9 +37,12 @@ const Home = () => {
     (state: RootState) => state.notification.notifications,
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // State cho pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
   const [productsRecommend, setProductsRecommend] = useState<typeProduct[]>([]);
-
+  const user = useSelector((state: RootState) => state.user?.user);
+  useEffect(() => {
+    console.log('user', user);
+  }, [user]);
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -62,7 +65,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // Hàm xử lý pull-to-refresh
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchData();

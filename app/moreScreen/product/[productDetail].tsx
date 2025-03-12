@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Link, useLocalSearchParams, useRouter} from 'expo-router';
@@ -16,7 +17,6 @@ import {
 
 import Slider from '@/components/slider/Slider';
 import StarRating from '@/components/StarRating';
-
 import {productReviewData} from '@/data/ProductReviewData';
 import ProductReview from '@/components/productComponent/productReview';
 import BtnBackScreen from '@/components/BtnBackScreen';
@@ -24,94 +24,163 @@ import BtnAddToCart from '@/components/BtnAddToCart';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 import BtnAddToWishList from '@/components/BtnAddToWishList';
-import {typeProduct} from '@/models/product.model';
+import {typeProduct, typeProductDetail} from '@/models/product.model';
+import {typePromotion} from '@/models/promotion.model';
+import {getPromotionByProductID} from '@/hooks/api/usePromotion';
+import {
+  getProductDetailById,
+  getProductRecommend,
+} from '@/hooks/api/useProduct';
+import {typeReview, typeReviewByProductID} from '@/models/review.model';
+import {getReviewByProductID} from '@/hooks/api/useReview';
+import ListProductReview from '@/components/productComponent/listProductReview';
+import Loading from '@/components/Loading';
+import ListProduct from '@/components/productComponent/listProduct';
+
 const ProductDetail = () => {
-  const user = useSelector((state: RootState) => state.user.user);
-  const [products, setProducts] = useState<typeProduct>();
+  const user = useSelector((state: RootState) => state.user?.user);
+  const [products, setProducts] = useState<typeProductDetail>();
   const {productDetail} = useLocalSearchParams();
+  const [promotion, setPromotion] = useState<typePromotion>();
+  const [reviews, setReviews] = useState<typeReviewByProductID>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [productRecommend, setProductRecommend] = useState<typeProduct[]>();
+  const router = useRouter();
+
   useEffect(() => {
-    try {
-      const decodedProduct = productDetail
-        ? decodeURIComponent(productDetail as string)
-        : '[]';
-      const dataArray = JSON.parse(decodedProduct);
-      setProducts(dataArray);
-    } catch (error) {
-      console.error('Error parsing sort parameter:', error);
-    }
+    const fetchData = async () => {
+      setIsLoading(true);
+      const product = await getProductDetailById(Number(productDetail));
+      if (product) setProducts(product);
+      const reviewsData = await getReviewByProductID(productDetail.toString());
+      if (reviewsData) setReviews(reviewsData);
+      setIsLoading(false);
+    };
+
+    findPromotion(Number(productDetail));
+    fetchData();
   }, [productDetail]);
-  const product_id = Number(productDetail); // Chuyển 'product_id' sang kiểu số
+
+  useEffect(() => {
+    const fetchRecommend = async () => {
+      if (products) {
+        const recommend = await getProductRecommend(
+          products.product_id,
+          products.category_id,
+          products.name,
+          products.supplier_id,
+        );
+        if (recommend) setProductRecommend(recommend);
+      }
+    };
+    fetchRecommend();
+  }, [products]);
+
+  const findPromotion = async (product_id: number) => {
+    setIsLoading(true);
+    const promotionData = await getPromotionByProductID(product_id);
+    if (promotionData) setPromotion(promotionData);
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return <Loading visible={isLoading} text="Loading..." />;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{flexDirection: 'row'}}>
-          <BtnBackScreen></BtnBackScreen>
+        <View style={styles.headerContent}>
+          <BtnBackScreen />
           <Text style={styles.title}>{products?.name}</Text>
         </View>
       </View>
       <ScrollView style={styles.body} showsVerticalScrollIndicator={false}>
-        <Slider></Slider>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: hp(2),
-          }}>
-          <Text style={{fontSize: wp(7), fontWeight: 'bold'}}>
-            {products?.name}
+        <Slider />
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>{products?.name}</Text>
+          {user && (
+            <BtnAddToWishList
+              user_id={user.user_id}
+              product_id={products?.product_id as number}
+            />
+          )}
+        </View>
+
+        {products?.discount_price ? (
+          <View style={styles.priceContainer}>
+            <Text style={styles.discountPrice}>${products.discount_price}</Text>
+            <View style={styles.originalPriceContainer}>
+              <Text style={styles.originalPrice}>${products.price}</Text>
+              <Text style={styles.discountPercent}>
+                {Math.floor(promotion?.discount_percent as number)}% Off
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <Text style={styles.price}>${products?.price}</Text>
+        )}
+
+        {/* Chèn thông tin sản phẩm tại đây */}
+        <View style={styles.productDetails}>
+          <Text style={styles.detailTitle}>Product Details</Text>
+          <Text style={styles.detailText}>
+            {products?.description ||
+              'No description available for this product.'}
           </Text>
-          <BtnAddToWishList
-            user_id={user.user_id}
-            product_id={products?.product_id as number}></BtnAddToWishList>
+          {products?.Supplier && (
+            <Text style={styles.detailText}>
+              Supplier: {products.Supplier.name || 'Unknown Supplier'}
+            </Text>
+          )}
         </View>
-        <View style={{marginTop: hp(1), marginBottom: hp(3)}}>
-          <StarRating rating={4}></StarRating>
-        </View>
-        <Text style={{fontSize: wp(7), fontWeight: 'bold', color: '#40BFFF'}}>
-          {products?.price}$
-        </Text>
-        <View>
-          <View style={styles.other}>
-            <Text style={styles.otherTitle1}>Review Product</Text>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Review Product</Text>
             <Link
               href={{
                 pathname: '/moreScreen/product/productReview/[productReview]',
                 params: {productReview: 'def'},
               }}
               asChild>
-              <TouchableOpacity>
-                <Text style={styles.otherTitle2}>See More</Text>
-              </TouchableOpacity>
+              {reviews?.reviews && reviews.reviews.length && (
+                <TouchableOpacity>
+                  <Text style={styles.seeMore}>See More</Text>
+                </TouchableOpacity>
+              )}
             </Link>
           </View>
+          <View style={styles.ratingContainer}>
+            <StarRating rating={reviews?.average_rating || 0} />
+            <Text style={styles.ratingText}>
+              {reviews?.average_rating || 0} ({reviews?.total_review} Review)
+            </Text>
+          </View>
+          {reviews?.reviews && reviews.reviews.length ? (
+            <ListProductReview data={reviews?.reviews || []} />
+          ) : (
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={styles.noReviewsText}>
+                This product has no reviews yet
+              </Text>
+            </View>
+          )}
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: hp(2),
-          }}>
-          <StarRating rating={4}></StarRating>
-          <Text style={{fontSize: wp(5), marginLeft: wp(2)}}>
-            So sao (so Review)
-          </Text>
-        </View>
-        <View>
-          <ProductReview item={productReviewData[0]}></ProductReview>
-          {/* <ListProductReview data={productReviewData}></ListProductReview> */}
-        </View>
-        <View style={{marginTop: hp(2)}}>
-          <Text style={styles.otherTitle1}>You Might Also Like</Text>
-        </View>
-        {/* <ListProduct data={ProductData}></ListProduct> */}
-        {user && products?.product_id ? (
+
+        {productRecommend && productRecommend.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>You Might Also Like</Text>
+            <ListProduct data={productRecommend} />
+          </View>
+        )}
+
+        {user && products?.product_id && (
           <BtnAddToCart
-            user_id={user.user_id}
+            user_id={user?.user_id}
             product_id={products?.product_id}
             quantity={1}
           />
-        ) : (
-          <Text style={{color: 'red'}}>Thông tin sản phẩm không hợp lệ</Text>
         )}
       </ScrollView>
     </View>
@@ -123,36 +192,165 @@ export default ProductDetail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: hp(4),
-    paddingHorizontal: wp(3),
+    paddingTop: hp(6),
+    paddingHorizontal: wp(4),
+    backgroundColor: '#F5F6FA',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: hp(8),
     borderBottomWidth: wp(0.1),
     borderColor: '#9098B1',
-    // marginBottom: hp(2),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: hp(0.2)},
+    shadowOpacity: 0.1,
+    shadowRadius: wp(1),
+    elevation: 2,
+    marginBottom: hp(1),
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: hp(1),
+    paddingHorizontal: wp(2),
   },
   title: {
-    fontSize: wp(5),
-    fontWeight: 'bold',
+    fontSize: wp(6),
+    fontWeight: '700',
+    color: '#223263',
     marginLeft: wp(3),
   },
-  body: {},
-  other: {
+  body: {
+    flex: 1,
+  },
+  productInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: hp(3),
+    alignItems: 'center',
+    marginTop: hp(2),
+    padding: wp(2),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(3),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  otherTitle1: {
-    fontSize: wp(5),
+  productName: {
+    fontSize: wp(6.5),
     fontWeight: 'bold',
+    color: '#223263',
   },
-  otherTitle2: {
+  wishListButton: {
+    padding: wp(2),
+  },
+  priceContainer: {
+    marginTop: hp(1),
+    padding: wp(2),
+    backgroundColor: '#FFF3F3',
+    borderRadius: wp(3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  discountPrice: {
+    fontSize: wp(6),
+    color: '#FF5733',
+    fontWeight: '700',
+  },
+  originalPriceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginTop: hp(0.5),
+  },
+  originalPrice: {
+    fontSize: wp(4),
+    color: '#9098B1',
+    textDecorationLine: 'line-through',
+    marginHorizontal: wp(1),
+  },
+  discountPercent: {
+    fontSize: wp(3.5),
+    fontWeight: '600',
+    color: '#FF5733',
+  },
+  price: {
     fontSize: wp(5),
-    fontWeight: 'bold',
     color: '#40BFFF',
+    fontWeight: '700',
+    marginTop: hp(1),
+    padding: wp(2),
+    backgroundColor: '#E6F0FA',
+    borderRadius: wp(3),
+    textAlign: 'center',
+  },
+  productDetails: {
+    marginTop: hp(2),
+    padding: wp(3),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(3),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  detailTitle: {
+    fontSize: wp(5.5),
+    fontWeight: '600',
+    color: '#223263',
+    marginBottom: hp(1),
+  },
+  detailText: {
+    fontSize: wp(4),
+    color: '#666666',
+    lineHeight: wp(5),
+    marginBottom: hp(0.5),
+  },
+  section: {
+    marginTop: hp(2),
+    padding: wp(2),
+    backgroundColor: '#FFFFFF',
+    borderRadius: wp(3),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: wp(5.5),
+    fontWeight: '600',
+    color: '#223263',
+  },
+  seeMore: {
+    fontSize: wp(4.5),
+    fontWeight: '600',
+    color: '#40BFFF',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    fontSize: wp(3.5),
+    color: '#9098B1',
+    marginLeft: wp(2),
+  },
+  addToCartButton: {
+    marginTop: hp(2),
+    marginBottom: hp(2),
+  },
+  noReviewsText: {
+    fontSize: wp(4),
+    color: '#9098B1',
+    marginTop: hp(1),
   },
 });

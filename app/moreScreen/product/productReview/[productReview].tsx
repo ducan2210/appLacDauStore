@@ -69,7 +69,7 @@ const ProductReview = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.body}>
           <Filter></Filter>
-          <ListProductReview data={productReviewData}></ListProductReview>
+          {/* <ListProductReview data={productReviewData}></ListProductReview> */}
         </View>
         <Link
           href={{

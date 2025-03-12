@@ -21,7 +21,7 @@ export const loadUser = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'userSlice',
   initialState: {
-    user: null as typeUser | null, // Khởi tạo là null, khớp với trạng thái "chưa có user"
+    user: null as typeUser | null,
     image: false,
     loading: false,
     error: null as string | null,
@@ -33,11 +33,11 @@ export const userSlice = createSlice({
       }
     },
     setUser: (state, action) => {
-      state.user = action.payload; // action.payload là typeUser object
-      state.image = !!action.payload; // image = true nếu có user
+      state.user = action.payload;
+      state.image = !!action.payload;
     },
     logoutUser: state => {
-      state.user = null; // Reset về null để biểu thị không có user
+      state.user = null;
       state.image = false;
       state.error = null;
     },
@@ -49,7 +49,7 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(loadUser.fulfilled, (state, action) => {
-        state.user = action.payload; // Gán object typeUser từ API
+        state.user = action.payload;
         state.image = true;
         state.loading = false;
       })
