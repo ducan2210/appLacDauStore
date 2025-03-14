@@ -73,7 +73,6 @@ const PaymentMethod = () => {
     setIsLoading(true);
 
     // 1. Create a payment intent
-    console.log('Creating payment intent...');
     const response = await createPaymentUrl(amount);
 
     if (!response || response.error) {
@@ -81,11 +80,7 @@ const PaymentMethod = () => {
       setIsLoading(false);
       return;
     }
-
-    console.log('Payment intent created:', response);
-
     // 2. Initialize the Payment sheet
-    console.log('Initializing payment sheet...');
     const initResponse = await initPaymentSheet({
       merchantDisplayName: 'LacDauStore',
       paymentIntentClientSecret: response.clientSecret,
@@ -98,11 +93,7 @@ const PaymentMethod = () => {
       setIsLoading(false);
       return;
     }
-
-    console.log('Payment sheet initialized');
-
     // 3. Present the Payment Sheet from Stripe
-    console.log('Presenting payment sheet...');
     const {error} = await presentPaymentSheet();
 
     if (error) {

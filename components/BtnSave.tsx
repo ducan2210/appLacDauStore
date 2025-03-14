@@ -12,7 +12,6 @@ const BtnSave = ({userName, data}: {userName: string; data: object}) => {
   const handleSave = async () => {
     try {
       const result = await updateUser(userName, data, dispatch);
-      console.log('User updated:', result);
       alert('User updated successfully!');
     } catch (error) {
       console.error('Save failed:', error);

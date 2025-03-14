@@ -28,6 +28,10 @@ const ChangePassword = () => {
               secureTextEntry={true}
               placeholder="Old Password"
               style={{fontSize: wp(4)}}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
           <Text style={styles.titleBox}>New Password</Text>
@@ -42,6 +46,10 @@ const ChangePassword = () => {
               secureTextEntry={true}
               placeholder="New Password"
               style={{fontSize: wp(4)}}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
           <Text style={styles.titleBox}>New Password Again</Text>
@@ -56,6 +64,10 @@ const ChangePassword = () => {
               secureTextEntry={true}
               placeholder="New Password Again"
               style={{fontSize: wp(4)}}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
         </View>

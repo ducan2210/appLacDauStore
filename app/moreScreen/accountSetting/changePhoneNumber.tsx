@@ -11,7 +11,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 const ChangePhoneNumber = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [data, setData] = useState({phone: user.phone});
+  const [data, setData] = useState({phone: user?.phone});
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -33,11 +33,15 @@ const ChangePhoneNumber = () => {
               onChangeText={text => setData({...data, phone: text})}
               placeholder="Sdt dang sai"
               style={{fontSize: wp(4)}}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
         </View>
         <View>
-          <BtnSave userName={user.username} data={data}></BtnSave>
+          {user && <BtnSave userName={user.username} data={data}></BtnSave>}
         </View>
       </View>
     </View>

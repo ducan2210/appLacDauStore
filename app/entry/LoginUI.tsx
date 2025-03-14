@@ -54,6 +54,10 @@ const LoginUI = () => {
               value={userName}
               style={styles.textInput}
               placeholder="Username or Email"
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
 
@@ -66,6 +70,10 @@ const LoginUI = () => {
               secureTextEntry={true}
               onChangeText={text => setPassword(text)}
               value={password}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
         </View>

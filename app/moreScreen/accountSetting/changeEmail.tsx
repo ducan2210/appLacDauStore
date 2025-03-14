@@ -11,7 +11,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 const ChangeEmail = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [data, setData] = useState({email: user.email});
+  const [data, setData] = useState({email: user?.email});
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -30,6 +30,10 @@ const ChangeEmail = () => {
             />
             <TextInput
               value={data.email}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
               onChangeText={text => setData({...data, email: text})}
               placeholder="Email dang sai"
               style={{fontSize: wp(4)}}
@@ -37,7 +41,7 @@ const ChangeEmail = () => {
           </View>
         </View>
         <View>
-          <BtnSave userName={user.username} data={data}></BtnSave>
+          {user && <BtnSave userName={user.username} data={data}></BtnSave>}
         </View>
       </View>
     </View>

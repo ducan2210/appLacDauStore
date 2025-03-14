@@ -39,10 +39,6 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [productsRecommend, setProductsRecommend] = useState<typeProduct[]>([]);
-  const user = useSelector((state: RootState) => state.user?.user);
-  useEffect(() => {
-    console.log('user', user);
-  }, [user]);
   const fetchData = async () => {
     setIsLoading(true);
     try {

@@ -1,4 +1,5 @@
 import {typePaymentMethod} from './paymentMethod.model';
+import {typeReview} from './review.model';
 
 export type typeOrder = {
   order_id: number;
@@ -39,4 +40,5 @@ export type typeOrderInformation = {
   discount_applied: string;
   OrderItems: typeOrderItems[]; // Mảng các orderItem, không phải tuple
   PaymentMethod: typePaymentMethod;
+  Reviews: typeReview[];
 };

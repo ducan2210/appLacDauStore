@@ -21,6 +21,7 @@ const _layout = () => {
       />
       <Stack.Screen name="feedNotification" options={{headerShown: false}} />
       <Stack.Screen name="offerNotification" options={{headerShown: false}} />
+      <Stack.Screen name="chat" options={{headerShown: false}} />
     </Stack>
   );
 };

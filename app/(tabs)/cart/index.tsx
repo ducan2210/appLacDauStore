@@ -117,6 +117,10 @@ const Cart = () => {
               onChangeText={text => setCoupon(text)}
               placeholder="Enter Coupon Code"
               style={styles.couponInput}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
             <TouchableOpacity
               onPress={handleApplyCoupon}

@@ -2,18 +2,6 @@ import axios from 'axios';
 import {apiUrl} from './apiURL';
 import {Platform} from 'react-native';
 
-// export const uploadReviewImage = async ({formData}: {formData: FormData}) => {
-//   try {
-//     const response = await axios.post(`${apiUrl}/uploadReviewImage`, formData, {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     });
-//     console.log('Upload thành công:', response.data);
-//     return response.data.url; // Giả sử API trả về URL của ảnh sau khi upload
-//   } catch (error) {}
-// };
-
 export const uploadReviewImage = async (photos: string[]) => {
   const formData = new FormData();
 
@@ -29,10 +17,6 @@ export const uploadReviewImage = async (photos: string[]) => {
   }
 
   try {
-    formData.forEach((value, key) => {
-      console.log(`📝 ${key}:`, value);
-    });
-
     const response = await axios.post(`${apiUrl}/UploadReviewImage`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

@@ -41,7 +41,6 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
           onTextSearchChange(product);
         } else {
           setProductsRecommend([]);
-          console.log('No products found');
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -63,6 +62,10 @@ const SearchBar = ({onTextSearchChange}: SearchBarProps) => {
         <TextInput
           style={{flex: 1}}
           value={textSearch}
+          autoComplete="off"
+          autoCorrect={false} // Tắt tự động sửa
+          spellCheck={false} // Tắt kiểm tra chính tả
+          keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
           onChangeText={text => {
             setTextSearch(text);
           }}

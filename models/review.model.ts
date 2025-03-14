@@ -10,6 +10,7 @@ export type typeReview = {
   updated_at: Date;
   User: typeUser;
   photos: string | null;
+  order_id: number;
 };
 
 export type typeReviewByProductID = {

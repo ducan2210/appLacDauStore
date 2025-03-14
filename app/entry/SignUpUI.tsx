@@ -91,6 +91,10 @@ const SignUpUP = () => {
               placeholder="Full Name"
               onChangeText={text => setUsername(text)}
               value={userName}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
           <View style={styles.inputContainer}>
@@ -101,6 +105,10 @@ const SignUpUP = () => {
               placeholder="Your Email"
               onChangeText={text => setEmail(text)}
               value={email}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
           </View>
           {errorsEmail && (
@@ -118,6 +126,10 @@ const SignUpUP = () => {
               onChangeText={text => setPassword(text)}
               value={password}
               textContentType="none" // Tắt tính năng "Automatic Strong Passwords"
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Feather
@@ -143,6 +155,10 @@ const SignUpUP = () => {
               onChangeText={text => setPasswordAgain(text)}
               value={passwordAgain}
               textContentType="none" // Tắt tính năng "Automatic Strong Passwords"
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             />
             <TouchableOpacity
               onPress={() => setShowPasswordAgain(!showPasswordAgain)}>

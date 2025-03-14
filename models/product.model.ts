@@ -27,5 +27,5 @@ export type typeProductDetail = {
   created_at: Date;
   updated_at: Date;
   Supplier: typeSupplier;
-  Review: typeReview[];
+  Reviews: typeReview[];
 };

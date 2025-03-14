@@ -141,7 +141,7 @@ const ProductDetail = () => {
             <Link
               href={{
                 pathname: '/moreScreen/product/productReview/[productReview]',
-                params: {productReview: 'def'},
+                params: {productReview: JSON.stringify(products)},
               }}
               asChild>
               {reviews?.reviews && reviews.reviews.length && (

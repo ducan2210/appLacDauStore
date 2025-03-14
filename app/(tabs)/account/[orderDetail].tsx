@@ -1,42 +1,50 @@
+import BtnBackScreen from '@/components/BtnBackScreen';
+import {getOrderById} from '@/hooks/api/useOrder';
+import {typeOrderInformation} from '@/models/order.model';
+import {FontAwesome} from '@expo/vector-icons';
+import {Link, useLocalSearchParams} from 'expo-router';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   ActivityIndicator,
+  Image,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  Image,
-  ScrollView,
   TouchableOpacity,
-  TextInput,
+  View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Link, useLocalSearchParams, useRouter} from 'expo-router'; // Thêm useRouter
-import {getOrderById} from '@/hooks/api/useOrder';
-import BtnBackScreen from '@/components/BtnBackScreen';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import {typeOrderInformation} from '@/models/order.model';
-import {FontAwesome} from '@expo/vector-icons';
+import {useFocusEffect} from '@react-navigation/native';
 
 const OrderDetail = () => {
   const {orderDetail} = useLocalSearchParams();
-  const router = useRouter(); // Để điều hướng sang trang khác
-  const [orderInformation, setOrder] = useState<typeOrderInformation>();
+  const [orderInformation, setOrderInformation] =
+    useState<typeOrderInformation>();
   const [loading, setLoading] = useState(true);
-  const [ratings, setRatings] = useState<{[key: number]: number}>({});
-  const [comments, setComments] = useState<{[key: number]: string}>({});
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadOrderDetail = async () => {
+    setLoading(true);
+    const order = await getOrderById(Number(orderDetail));
+    if (order) {
+      setOrderInformation(order.order);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const loadOrderDetail = async () => {
-      const order = await getOrderById(Number(orderDetail));
-      if (order) {
-        setOrder(order.order);
-      }
-      setLoading(false);
-    };
     loadOrderDetail();
   }, [orderDetail]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadOrderDetail();
+    }, [orderDetail]),
+  );
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -86,51 +94,11 @@ const OrderDetail = () => {
     ));
   };
 
-  const renderRatingStars = (itemId: number, currentRating: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <TouchableOpacity key={i} onPress={() => handleRatingChange(itemId, i)}>
-          <FontAwesome
-            name={i <= currentRating ? 'star' : 'star-o'}
-            size={wp(4)}
-            color={i <= currentRating ? '#FFD700' : '#808080'}
-            style={{marginRight: wp(1)}}
-          />
-        </TouchableOpacity>,
-      );
-    }
-    return stars;
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadOrderDetail();
+    setRefreshing(false);
   };
-
-  const handleRatingChange = (itemId: number, rating: number) => {
-    setRatings(prev => ({...prev, [itemId]: rating}));
-  };
-
-  const handleCommentChange = (itemId: number, text: string) => {
-    setComments(prev => ({...prev, [itemId]: text}));
-  };
-
-  // Xử lý khi nhấn nút Submit
-  const handleSubmitReview = (itemId: number) => {
-    const rating = ratings[itemId] || 0;
-    const comment = comments[itemId] || '';
-    console.log(
-      `Review for item ${itemId}: Rating = ${rating}, Comment = ${comment}`,
-    );
-    // Gọi API để gửi đánh giá lên server tại đây nếu cần
-    // Ví dụ: await submitReview(itemId, rating, comment);
-    alert(`Submitted review for item ${itemId}: ${rating} stars, "${comment}"`);
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -138,7 +106,17 @@ const OrderDetail = () => {
         <BtnBackScreen />
         <Text style={styles.title}>Order Information</Text>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#40BFFF']} // Màu của vòng loading khi kéo
+            tintColor="#40BFFF" // Màu trên iOS
+          />
+        }
+        showsVerticalScrollIndicator={false}
+        style={styles.body}>
         <View style={styles.statusContainer}>
           <View style={{alignItems: 'center', marginBottom: hp(2)}}>
             <Text style={styles.infoLabel}>Order status</Text>
@@ -261,52 +239,66 @@ const OrderDetail = () => {
         </View>
         {orderInformation?.OrderItems &&
         orderInformation.OrderItems.length > 0 ? (
-          orderInformation.OrderItems.map(item => (
-            <TouchableOpacity key={item.order_item_id}>
-              <View style={styles.orderItem}>
-                <Image
-                  style={styles.imageProduct}
-                  source={{uri: item.Product.image_url}}
-                />
-                <View
-                  style={{marginLeft: wp(2), justifyContent: 'space-between'}}>
-                  <Text style={styles.productName}>{item.Product.name}</Text>
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={{fontSize: wp(4)}}>Price: ${item.price}</Text>
+          orderInformation.OrderItems.map(item => {
+            const hasReview = orderInformation?.Reviews?.some(
+              review => review.product_id === item.product_id,
+            );
+
+            return (
+              <TouchableOpacity key={item.order_item_id}>
+                <View style={styles.orderItem}>
+                  <Image
+                    style={styles.imageProduct}
+                    source={{uri: item.Product.image_url}}
+                  />
+                  <View
+                    style={{
+                      marginLeft: wp(2),
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text style={styles.productName}>{item.Product.name}</Text>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{fontSize: wp(4)}}>
+                        Price: ${item.price}
+                      </Text>
+                      {item.discount && (
+                        <Text style={styles.price}> ${item.Product.price}</Text>
+                      )}
+                    </View>
+                    <Text style={{fontSize: wp(4)}}>
+                      Quantity: {item.quantity}
+                    </Text>
                     {item.discount && (
-                      <Text style={styles.price}> ${item.Product.price}</Text>
+                      <Text style={{fontSize: wp(4)}}>
+                        Discount: {Math.round(item.discount)}%
+                      </Text>
+                    )}
+
+                    {orderInformation?.status === 'completed' && !hasReview && (
+                      <View style={styles.reviewContainer}>
+                        <Link
+                          href={{
+                            pathname:
+                              '/moreScreen/product/productReview/writeReview/[writeReview]',
+                            params: {
+                              writeReview: item.Product.product_id,
+                              order_id: item.order_id,
+                            },
+                          }}
+                          asChild>
+                          <TouchableOpacity style={styles.submitButton}>
+                            <Text style={styles.submitButtonText}>
+                              Go to Review Page
+                            </Text>
+                          </TouchableOpacity>
+                        </Link>
+                      </View>
                     )}
                   </View>
-                  <Text style={{fontSize: wp(4)}}>
-                    Quantity: {item.quantity}
-                  </Text>
-                  {item.discount && (
-                    <Text style={{fontSize: wp(4)}}>
-                      Discount: {Math.round(item.discount)}%
-                    </Text>
-                  )}
-
-                  {orderInformation?.status === 'completed' && (
-                    <View style={styles.reviewContainer}>
-                      <Link
-                        href={{
-                          pathname:
-                            '/moreScreen/product/productReview/writeReview/[writeReview]',
-                          params: {writeReview: item.Product.product_id},
-                        }}
-                        asChild>
-                        <TouchableOpacity style={styles.submitButton}>
-                          <Text style={styles.submitButtonText}>
-                            Go to Review Page
-                          </Text>
-                        </TouchableOpacity>
-                      </Link>
-                    </View>
-                  )}
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))
+              </TouchableOpacity>
+            );
+          })
         ) : (
           <View style={styles.loadingContainer}>
             <Text style={{fontSize: wp(4)}}>Loading...</Text>

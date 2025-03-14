@@ -11,7 +11,7 @@ import {RootState} from '@/redux/rootReducer';
 
 const ChangeName = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [data, setData] = useState({username: user.username});
+  const [data, setData] = useState({username: user?.username});
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -22,12 +22,23 @@ const ChangeName = () => {
         <View>
           <Text style={styles.titleBox}>First Name</Text>
           <View style={styles.textInputStyle}>
-            <TextInput placeholder="First Name" style={{fontSize: wp(4)}} />
+            <TextInput
+              placeholder="First Name"
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
+              style={{fontSize: wp(4)}}
+            />
           </View>
           <Text style={styles.titleBox}>Last Name</Text>
           <View style={styles.textInputStyle}>
             <TextInput
               value={data.username}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
+              keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
               onChangeText={text => setData({...data, username: text})}
               placeholder="Last Name"
               style={{fontSize: wp(4)}}
@@ -35,7 +46,7 @@ const ChangeName = () => {
           </View>
         </View>
         <View>
-          <BtnSave data={data} userName={user.username}></BtnSave>
+          {user && <BtnSave data={data} userName={user.username}></BtnSave>}
         </View>
       </View>
     </View>

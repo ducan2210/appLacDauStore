@@ -31,6 +31,10 @@ const AddAddress = () => {
             value={fullName}
             multiline={true}
             numberOfLines={4}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             style={styles.textInput}></TextInput>
         </View>
         <View style={{marginVertical: hp(2)}}>
@@ -41,6 +45,10 @@ const AddAddress = () => {
             onChangeText={text => setPhoneNumber(text)}
             value={phoneNumber}
             multiline={true}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             numberOfLines={4}
             style={styles.textInput}></TextInput>
         </View>
@@ -53,6 +61,10 @@ const AddAddress = () => {
             value={specificAddress}
             multiline={true}
             numberOfLines={4}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             style={styles.textInput}></TextInput>
         </View>
         <View style={{marginVertical: hp(2)}}>
@@ -62,6 +74,10 @@ const AddAddress = () => {
             value={city}
             multiline={true}
             numberOfLines={4}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             style={styles.textInput}></TextInput>
         </View>
         <View style={{marginVertical: hp(2)}}>
@@ -73,6 +89,10 @@ const AddAddress = () => {
             value={state}
             multiline={true}
             numberOfLines={4}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             style={styles.textInput}></TextInput>
         </View>
 
@@ -83,6 +103,10 @@ const AddAddress = () => {
             value={zipCode}
             multiline={true}
             numberOfLines={4}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             style={styles.textInput}></TextInput>
         </View>
         <View style={{marginVertical: hp(2)}}>
@@ -91,18 +115,24 @@ const AddAddress = () => {
             onChangeText={text => setCountry(text)}
             value={country}
             multiline={true}
+            autoComplete="off"
+            autoCorrect={false} // Tắt tự động sửa
+            spellCheck={false} // Tắt kiểm tra chính tả
+            keyboardType="ascii-capable" // Chỉ cho phép ký tự ASCII cơ bản
             numberOfLines={4}
             style={styles.textInput}></TextInput>
         </View>
-        <BtnAddAddress
-          user_id={user.user_id}
-          full_name={fullName}
-          phone={phoneNumber}
-          address_line={specificAddress}
-          postal_code={zipCode}
-          city={city}
-          state={state}
-          country={country}></BtnAddAddress>
+        {user && (
+          <BtnAddAddress
+            user_id={user.user_id}
+            full_name={fullName}
+            phone={phoneNumber}
+            address_line={specificAddress}
+            postal_code={zipCode}
+            city={city}
+            state={state}
+            country={country}></BtnAddAddress>
+        )}
       </ScrollView>
     </View>
   );

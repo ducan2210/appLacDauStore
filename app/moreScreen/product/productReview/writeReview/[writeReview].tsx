@@ -23,7 +23,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/rootReducer';
 
 const WriteReview = () => {
-  const {writeReview} = useLocalSearchParams(); // Nhận productId từ OrderDetail
+  const {writeReview, order_id} = useLocalSearchParams(); // Nhận productId từ OrderDetail
   const [product, setProduct] = useState<any>(null); // Lưu thông tin sản phẩm
   const [rating, setRating] = useState<number>(0); // Rating cho sản phẩm
   const [comment, setComment] = useState<string>(''); // Bình luận
@@ -127,10 +127,11 @@ const WriteReview = () => {
         {user?.user_id !== undefined && (
           <BtnSubmitReview
             photos={photos}
-            product_id={2}
+            product_id={Number(writeReview)}
             user_id={user.user_id}
             rating={rating}
             comment={comment}
+            order_id={Number(order_id)}
           />
         )}
 

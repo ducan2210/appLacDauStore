@@ -1,3 +1,10 @@
+import {updateItemInCart} from '@/hooks/api/useCart';
+import {getProductById} from '@/hooks/api/useProduct';
+import {typeCart} from '@/models/cart.model';
+import {typeProduct} from '@/models/product.model';
+import {useAppDispatch} from '@/redux/store';
+import {AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,22 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {typeCart} from '@/models/cart.model';
-import {AntDesign, Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import {getProductById} from '@/hooks/api/useProduct';
-import {typeProduct} from '@/models/product.model';
-import BtnDeleteItemInCart from '../BtnDeleteItemInCart';
-import {updateItemInCart} from '@/hooks/api/useCart';
-import {RootState, useAppDispatch} from '@/redux/store';
-import {typePromotion} from '@/models/promotion.model';
-import {getPromotionByProductID} from '@/hooks/api/usePromotion';
 import BtnAddToWishList from '../BtnAddToWishList';
-import {useSelector} from 'react-redux';
+import BtnDeleteItemInCart from '../BtnDeleteItemInCart';
 
 const CartItem = ({item}: {item: typeCart}) => {
   const [cart, setCart] = useState<typeProduct>();
@@ -160,6 +157,9 @@ const CartItem = ({item}: {item: typeCart}) => {
               onBlur={handleBlur}
               keyboardType="numeric"
               style={styles.quantityInput}
+              autoComplete="off"
+              autoCorrect={false} // Tắt tự động sửa
+              spellCheck={false} // Tắt kiểm tra chính tả
             />
             <TouchableOpacity
               onPress={handleIncrease}

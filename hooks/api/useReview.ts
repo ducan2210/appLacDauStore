@@ -19,6 +19,7 @@ export const createReview = async (
   rating: number,
   comment: string,
   photos: string,
+  order_id: number,
 ) => {
   try {
     const response = await axios.post(`${apiUrl}/CreateReview`, {
@@ -27,6 +28,7 @@ export const createReview = async (
       rating,
       comment,
       photos,
+      order_id,
     });
     return response;
   } catch (error) {

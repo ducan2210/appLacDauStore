@@ -48,15 +48,17 @@ const index = () => {
             <Text style={styles.optionTitle}>Address</Text>
           </TouchableOpacity>
         </Link>
-        {/* <TouchableOpacity style={styles.option}>
-          <MaterialIcons
-            name="payment"
-            size={24}
-            color="#40BFFF"
-            style={{width: wp(10)}}
-          />
-          <Text style={styles.optionTitle}>Payment</Text>
-        </TouchableOpacity> */}
+        <Link href={'/moreScreen/chat'} asChild>
+          <TouchableOpacity style={styles.option}>
+            <Ionicons
+              name="location-outline"
+              size={24}
+              color="#40BFFF"
+              style={{width: wp(10)}}
+            />
+            <Text style={styles.optionTitle}>chat</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
       <View>
         <BtnSignout></BtnSignout>
